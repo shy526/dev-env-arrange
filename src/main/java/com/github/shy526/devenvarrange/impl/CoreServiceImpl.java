@@ -52,6 +52,11 @@ public class CoreServiceImpl implements CoreService {
         return bean.getVersion(download.getUrl().get(0));
     }
 
+    @Override
+    public boolean insert(String name, String version, String path) {
+        return false;
+    }
+
 
     private List<ToolRoute> buildToolRoutes(List<Path> toolRoutePaths) {
         List<ToolRoute> toolRoutes = new ArrayList<>(toolRoutePaths.size());

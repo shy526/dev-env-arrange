@@ -1,0 +1,23 @@
+{
+    "name":"maven3",
+    "variable":{
+    "config":"${root}/config/setting.xml"
+    },
+    "operate":[
+        "xml:config->localRepository=${root}/localRepository",
+        "xml:config->mirrors.mirror[*].id=nexus-aliyun",
+        "xml:config->mirrors.mirror[*].mirrorOf=central",
+        "xml:config->mirrors.mirror[*].name=Nexus aliyun",
+        "xml:config->mirrors.mirror[*].url=http://maven.aliyun.com/nexus/content/groups/public",
+        "copy:config->${user}/.m2/config",
+        "sysEnv:MAVEN_HOME_SHY=${root}",
+        "sysEnv:PATH+=;%MAVEN_HOME_SHY%\bin"
+    ],
+    "check":"./mvn -v",
+    "download":{
+        "url":[
+        "https://dlcdn.apache.org/maven/maven-3/"
+        ],
+        "process":" common"
+    }
+}

@@ -16,13 +16,8 @@
         }
     },
     "operate":[
-        "xml:config->localRepository=${root}/localRepository",
-        "xml:config->mirrors.mirror[*].id=nexus-aliyun",
-        "xml:config->mirrors.mirror[*].mirrorOf=central",
-        "xml:config->mirrors.mirror[*].name=Nexus aliyun",
-        "xml:config->mirrors.mirror[*].url=http://maven.aliyun.com/nexus/content/groups/public",
-        "copy:config->${user}/.m2/config",
-        "sysEnv:MAVEN_HOME_SHY=${root}",
-        "sysEnv:PATH+=;%MAVEN_HOME_SHY%/bin"
+        "xml:${config} localRepository ${root}/localRepository += mirrors.mirror.id=nexus-aliyun + mirrors.mirror.mirrorOf=central + mirrors.mirror.name=\"Nexus aliyun\" mirrors.mirror.url=http://maven.aliyun.com/nexus/content/groups/public +",
+        "file:${config} ${userHome}/.m2/config ->" ,
+        "sysEnv:MAVEN_HOME_SHY ${root} = path ${PATH} ;%MAVEN_HOME_SHY%/bin +"
         ]
 }

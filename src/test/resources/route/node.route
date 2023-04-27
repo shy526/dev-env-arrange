@@ -9,7 +9,10 @@
     "versionPattern": "v(\\d+\\.){2}\\d+",
     "osFormat": {
       "os-win-format": "zip",
-      "os-linux-format": "tar.gz",
-    }
+      "os-linux-format": "tar.gz"
+    },
+    "operate": [
+      "sysEnv:node_path_shy ${root} ="
+    ]
   }
 }

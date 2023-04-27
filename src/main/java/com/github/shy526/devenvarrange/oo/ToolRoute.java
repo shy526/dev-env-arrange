@@ -10,7 +10,7 @@ import java.util.Map;
 public class ToolRoute {
     private String name;
 
-    private Map<String,String> variable;
+    private Map<String, String> variable;
     private List<String> operate;
 
     private String check;
@@ -20,7 +20,11 @@ public class ToolRoute {
 
     @Data
     public static class Download {
-        private List<String> url;
+        private List<String> urlRoot;
         private String process;
+        private String url;
+        private String versionPattern;
+        private Map<String, String> osFormat;
+
     }
 }

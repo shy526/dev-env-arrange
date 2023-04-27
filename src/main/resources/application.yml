@@ -1,16 +1,16 @@
 httpClientService:
-  connectionRequestTimeout: 500
+  connectionRequestTimeout: 5000
   connectTimeout: 5000
   socketTimeout: 30000
   validateAfterInactivity: 2000
   maxTotal: 200
-  defaultMaxPerRoute: 100
+  defaultMaxPerRoute: 1000
   automaticRetries: false
   closeTask:
-    idleTime: 4000
-    delay: 4000
+    idleTime: 5000
+    delay: 5000
 config:
-  route: "D:/个人文件/桌面/test111"
+  route: "D:/codeup/dev-env-arrange/src/test/resources/route"
 spring:
   shell:
     command:

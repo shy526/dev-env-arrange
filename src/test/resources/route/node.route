@@ -1,0 +1,15 @@
+{
+  "name": "node",
+  "download": {
+    "urlRoot": [
+      "https://nodejs.org/dist"
+    ],
+    "process": "common",
+    "url": "${urlRoot}/${version}/node-${version}-${os}-${arch}.${osFormat}",
+    "versionPattern": "v(\\d+\\.){2}\\d+",
+    "osFormat": {
+      "os-win-format": "zip",
+      "os-linux-format": "tar.gz",
+    },
+  },
+}

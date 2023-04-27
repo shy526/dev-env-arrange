@@ -24,22 +24,28 @@ public class ShellCommand {
         List<ToolRoute> toolRoutes = coreService.getToolRoutes();
         LinkedHashMap<String, Object> head = new LinkedHashMap<>();
         head.put("name", "name");
-        head.put("download.url[0]", "downloadRootUrl");
-        TableModel model = new BeanListTableModel<>(toolRoutes, head);
-        TableBuilder tableBuilder = new TableBuilder(model);
-        tableBuilder.addFullBorder(BorderStyle.oldschool);
-        return tableBuilder.build();
+        head.put("download.urlRoot[0]", "downloadRootUrl");
+
+        return buildTable(toolRoutes, head);
     }
 
     @ShellMethod(value = "列出工具支持的版本", key = {"versions", "v"})
     public Table getVersions(String name) {
         List<ToolVersion> versions = coreService.getVersions(name);
+        if (versions.isEmpty()) {
+            throw new RuntimeException("不支持或无法获取版本号", null);
+        }
         LinkedHashMap<String, Object> head = new LinkedHashMap<>();
         head.put("version", "version");
         head.put("dateStr", "date");
-        TableModel model = new BeanListTableModel<>(versions, head);
+        head.put("url", "url");
+        return buildTable(versions, head);
+    }
+
+    private Table buildTable(List<?> data, LinkedHashMap<String, Object> head) {
+        TableModel model = new BeanListTableModel<>(data, head);
         TableBuilder tableBuilder = new TableBuilder(model);
-        tableBuilder.addFullBorder(BorderStyle.oldschool);
+        tableBuilder.addFullBorder(BorderStyle.fancy_double);
         return tableBuilder.build();
     }
 

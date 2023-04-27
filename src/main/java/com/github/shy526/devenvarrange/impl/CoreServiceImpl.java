@@ -46,10 +46,14 @@ public class CoreServiceImpl implements CoreService {
 
     @Override
     public List<ToolVersion> getVersions(String name) {
+        List<ToolVersion> result = new ArrayList<>();
         ToolRoute toolRoute = runContent.getToolRoute(name);
+        if (toolRoute==null){
+            return result;
+        }
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
-        return bean.getVersion(download.getUrl().get(0));
+        return bean.getVersion(toolRoute);
     }
 
     @Override

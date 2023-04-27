@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -82,13 +83,15 @@ public class CommonProcess implements DownloadProcess {
         String downloadUrl = getDownloadUrl(toolRoute, version);
         String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
         Path filePath = Paths.get(path).resolve(fileName);
+        File file = filePath.toFile();
+        boolean temp = file.exists() && file.delete();
         try (
                 HttpResult httpResult = httpClientService.get(downloadUrl);
                 CloseableHttpResponse response = httpResult.getResponse();
                 InputStream in = response.getEntity().getContent();
                 BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(filePath))
         ) {
-            IoHelp.copy(in, out);
+            IoHelp.copy(in, out, true);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

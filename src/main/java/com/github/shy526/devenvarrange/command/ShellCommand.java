@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.table.*;
+import org.springframework.util.FileCopyUtils;
 
 import java.util.*;
 
@@ -51,7 +52,8 @@ public class ShellCommand {
 
     @ShellMethod(value = "配置工具", key = {"install", "i"})
     public boolean installTool(String name ,String version){
-        coreService.insert(name,version,"D:\\codeup\\dev-env-arrange\\src\\test\\resources");
+        coreService.insert(name,version,"E:\\java-project\\dev-env-arrange\\src\\test\\resources");
+
         return false;
     }
 }

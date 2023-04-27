@@ -6,6 +6,7 @@ import com.github.shy526.devenvarrange.config.Config;
 import com.github.shy526.devenvarrange.config.RunContent;
 import com.github.shy526.devenvarrange.download.CommonProcess;
 import com.github.shy526.devenvarrange.download.DownloadProcess;
+import com.github.shy526.devenvarrange.help.IoHelp;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
 import com.github.shy526.http.HttpClientService;
@@ -22,6 +23,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 @Service
@@ -49,7 +51,7 @@ public class CoreServiceImpl implements CoreService {
     public List<ToolVersion> getVersions(String name) {
         List<ToolVersion> result = new ArrayList<>();
         ToolRoute toolRoute = runContent.getToolRoute(name);
-        if (toolRoute==null){
+        if (toolRoute == null) {
             return result;
         }
         ToolRoute.Download download = toolRoute.getDownload();
@@ -60,27 +62,17 @@ public class CoreServiceImpl implements CoreService {
     @Override
     public boolean insert(String name, String version, String path) {
         ToolRoute toolRoute = runContent.getToolRoute(name);
-        if (toolRoute==null){
+        if (toolRoute == null) {
             return false;
         }
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
         Path zipPath = bean.downloadFile(toolRoute, version, path);
-        File zipFile = zipPath.toFile();
-        if (!zipFile.exists()){
-           return false;
+        Path toolRoot = IoHelp.unZip(zipPath, Paths.get(path));
+        if (toolRoot==null){
+            return false;
         }
-
-        try(ZipInputStream zis = new ZipInputStream(new BufferedInputStream(Files.newInputStream(zipPath)))) {
-            ZipEntry ze =null;
-            while ((ze=zis.getNextEntry())!=null){
-                String fileName = ze.getName();
-                System.out.println("fileName = " + fileName);
-                zis.closeEntry();
-            }
-        }catch (Exception e){
-            log.error(e.getMessage(),e);
-        }
+        System.out.println("工具根目录:" + toolRoot);
         return false;
     }
 
@@ -100,7 +92,7 @@ public class CoreServiceImpl implements CoreService {
                     toolRoutes.add(toolRoute);
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(),e);
+                log.error(e.getMessage(), e);
             }
         }
         return toolRoutes;

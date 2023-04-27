@@ -10,6 +10,6 @@
     "osFormat": {
       "os-win-format": "zip",
       "os-linux-format": "tar.gz",
-    },
-  },
+    }
+  }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 @Data
 public class Config {
     private String route;
+    private String env;
     private final String osName=System.getProperty("os.name");
     private final String userHome=System.getProperty("user.home");
     private final String userName=System.getProperty("user.name");

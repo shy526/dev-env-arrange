@@ -12,7 +12,7 @@
         "url": "${urlRoot}/${version}/binaries/apache-maven-${version}-bin.${osFormat}",
         "osFormat": {
             "os-win-format": "zip",
-            "os-linux-format": "tar.gz",
+            "os-linux-format": "tar.gz"
         }
     }
 }

@@ -1,4 +1,6 @@
 package com.github.shy526.devenvarrange.rpn.xml;
 
-public class XmlSymbol {
+import com.github.shy526.devenvarrange.rpn.Symbol;
+
+public interface XmlSymbol extends Symbol {
 }

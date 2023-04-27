@@ -64,7 +64,6 @@ public class CoreServiceImpl implements CoreService {
         }
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
-        bean.get
         return false;
     }
 

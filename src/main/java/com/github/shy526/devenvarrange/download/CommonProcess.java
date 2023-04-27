@@ -1,9 +1,8 @@
 package com.github.shy526.devenvarrange.download;
 
-import com.alibaba.fastjson.JSON;
-import com.github.shy526.date.DateFormat;
-import com.github.shy526.devenvarrange.MyPropertyPlaceholderHelper;
+import com.github.shy526.devenvarrange.help.PlaceholderHelper;
 import com.github.shy526.devenvarrange.config.Config;
+import com.github.shy526.devenvarrange.help.IoHelp;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
 import com.github.shy526.http.HttpClientService;
@@ -16,14 +15,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.SystemPropertyUtils;
 
 import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,24 +78,21 @@ public class CommonProcess implements DownloadProcess {
     }
 
     @Override
-    public String downloadFile(ToolRoute toolRoute, String version, String path) {
+    public Path downloadFile(ToolRoute toolRoute, String version, String path) {
         String downloadUrl = getDownloadUrl(toolRoute, version);
+        String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
+        Path filePath = Paths.get(path).resolve(fileName);
         try (
                 HttpResult httpResult = httpClientService.get(downloadUrl);
                 CloseableHttpResponse response = httpResult.getResponse();
                 InputStream in = response.getEntity().getContent();
-                BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(Paths.get(path)));
+                BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(filePath))
         ) {
-            byte[] bytes = new byte[1024];
-            int len = -1;
-            while ((len = in.read(bytes, 0, bytes.length)) != -1) {
-                out.write(bytes, 0, len);
-            }
-            out.flush();
+            IoHelp.copy(in, out);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        return path;
+        return filePath;
     }
 
 
@@ -115,7 +109,7 @@ public class CommonProcess implements DownloadProcess {
         properties.put("osFormat", osFormat);
         properties.put("os", os);
         properties.put("arch", osArch.matches("64") ? "x64" : "x86");
-        return MyPropertyPlaceholderHelper.to(download.getUrl(), properties);
+        return PlaceholderHelper.to(download.getUrl(), properties);
     }
 
 

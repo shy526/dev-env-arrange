@@ -1,11 +1,13 @@
-package com.github.shy526.devenvarrange;
+package com.github.shy526.devenvarrange.help;
 
-import com.github.shy526.devenvarrange.oo.ToolRoute;
 import org.springframework.util.PropertyPlaceholderHelper;
 
 import java.util.Properties;
 
-public class MyPropertyPlaceholderHelper {
+/**
+ * 占位符处理工具
+ */
+public class PlaceholderHelper {
     private static final PropertyPlaceholderHelper pph = new PropertyPlaceholderHelper("${", "}");
 
     public static String to(String str,Properties properties) {

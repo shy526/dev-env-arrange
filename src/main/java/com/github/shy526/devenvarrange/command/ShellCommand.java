@@ -49,5 +49,9 @@ public class ShellCommand {
         return tableBuilder.build();
     }
 
-
+    @ShellMethod(value = "配置工具", key = {"install", "i"})
+    public boolean installTool(String name ,String version){
+        coreService.insert(name,version,"D:\\codeup\\dev-env-arrange\\src\\test\\resources");
+        return false;
+    }
 }

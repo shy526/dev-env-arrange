@@ -13,15 +13,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 @Service
 @Slf4j
@@ -64,6 +65,22 @@ public class CoreServiceImpl implements CoreService {
         }
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
+        Path zipPath = bean.downloadFile(toolRoute, version, path);
+        File zipFile = zipPath.toFile();
+        if (!zipFile.exists()){
+           return false;
+        }
+
+        try(ZipInputStream zis = new ZipInputStream(new BufferedInputStream(Files.newInputStream(zipPath)))) {
+            ZipEntry ze =null;
+            while ((ze=zis.getNextEntry())!=null){
+                String fileName = ze.getName();
+                System.out.println("fileName = " + fileName);
+                zis.closeEntry();
+            }
+        }catch (Exception e){
+            log.error(e.getMessage(),e);
+        }
         return false;
     }
 

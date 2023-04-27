@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface DownloadProcess {
     List<ToolVersion> getVersion(ToolRoute toolRoute);
+    String downloadFile(ToolRoute toolRoute, String version, String path);
 }

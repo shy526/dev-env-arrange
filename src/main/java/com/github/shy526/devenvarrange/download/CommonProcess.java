@@ -10,6 +10,7 @@ import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -17,6 +18,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.SystemPropertyUtils;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -55,8 +61,8 @@ public class CommonProcess implements DownloadProcess {
             String version = col[VERSION_INDEX].trim().replace("/", "");
             String dateStr = col[VERSION_DATE_INDEX].trim();
             String versionPattern = download.getVersionPattern();
-            if (versionPattern==null){
-                versionPattern="(\\d+\\.){2}\\d+";
+            if (versionPattern == null) {
+                versionPattern = "(\\d+\\.){2}\\d+";
             }
             Pattern compile = Pattern.compile(versionPattern);
             Matcher matcher = compile.matcher(version);
@@ -68,11 +74,33 @@ public class CommonProcess implements DownloadProcess {
                 continue;
             }
 
-            toolVersions.add(new ToolVersion(version, to.getDate(), to.getDateStr(),getDownloadUrl(toolRoute, version)));
+            toolVersions.add(new ToolVersion(version, to.getDate(), to.getDateStr(), getDownloadUrl(toolRoute, version)));
         }
         toolVersions.sort((ToolVersion t, ToolVersion t1) -> t.getDate().compareTo(t1.getDate()) * -1);
         return toolVersions;
     }
+
+    @Override
+    public String downloadFile(ToolRoute toolRoute, String version, String path) {
+        String downloadUrl = getDownloadUrl(toolRoute, version);
+        try (
+                HttpResult httpResult = httpClientService.get(downloadUrl);
+                CloseableHttpResponse response = httpResult.getResponse();
+                InputStream in = response.getEntity().getContent();
+                BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(Paths.get(path)));
+        ) {
+            byte[] bytes = new byte[1024];
+            int len = -1;
+            while ((len = in.read(bytes, 0, bytes.length)) != -1) {
+                out.write(bytes, 0, len);
+            }
+            out.flush();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+        return path;
+    }
+
 
     private String getDownloadUrl(ToolRoute toolRoute, String version) {
         ToolRoute.Download download = toolRoute.getDownload();
@@ -82,11 +110,11 @@ public class CommonProcess implements DownloadProcess {
         properties.put("urlRoot", download.getUrlRoot().get(0));
         properties.put("version", version);
         String os = osName.toLowerCase().startsWith("win") ? "win" : "linux";
-        String win = String.format("os-%s-format",os );
+        String win = String.format("os-%s-format", os);
         String osFormat = download.getOsFormat().get(win);
         properties.put("osFormat", osFormat);
         properties.put("os", os);
-        properties.put("arch", osArch.matches("64")?"x64":"x86");
+        properties.put("arch", osArch.matches("64") ? "x64" : "x86");
         return MyPropertyPlaceholderHelper.to(download.getUrl(), properties);
     }
 
@@ -100,7 +128,7 @@ public class CommonProcess implements DownloadProcess {
             String[] rows = text.split(separate);
             return Lists.newArrayList(rows);
         } catch (Exception e) {
-            log.error(e.getMessage()+":"+url, e);
+            log.error(e.getMessage() + ":" + url, e);
 
         }
         return result;

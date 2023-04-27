@@ -58,6 +58,13 @@ public class CoreServiceImpl implements CoreService {
 
     @Override
     public boolean insert(String name, String version, String path) {
+        ToolRoute toolRoute = runContent.getToolRoute(name);
+        if (toolRoute==null){
+            return false;
+        }
+        ToolRoute.Download download = toolRoute.getDownload();
+        DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
+        bean.get
         return false;
     }
 

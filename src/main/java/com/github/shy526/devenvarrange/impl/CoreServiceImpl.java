@@ -7,24 +7,24 @@ import com.github.shy526.devenvarrange.config.RunContent;
 import com.github.shy526.devenvarrange.download.CommonProcess;
 import com.github.shy526.devenvarrange.download.DownloadProcess;
 import com.github.shy526.devenvarrange.help.IoHelp;
+import com.github.shy526.devenvarrange.help.PlaceholderHelper;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
+import com.github.shy526.devenvarrange.rpn.RpnProcessor;
+import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.http.HttpClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 @Service
 @Slf4j
@@ -40,6 +40,10 @@ public class CoreServiceImpl implements CoreService {
     private RunContent runContent;
     @Autowired
     private CommonProcess commonProcess;
+
+
+    @Autowired
+    private RpnProcessor rpnProcessor;
 
     @Override
     public List<ToolRoute> getToolRoutes() {
@@ -65,14 +69,27 @@ public class CoreServiceImpl implements CoreService {
         if (toolRoute == null) {
             return false;
         }
+        System.out.println("下载中");
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
         Path zipPath = bean.downloadFile(toolRoute, version, path);
+        System.out.println("下载中完毕");
+        System.out.println("解压中:" + zipPath);
         Path toolRoot = IoHelp.unZip(zipPath, Paths.get(path));
-        if (toolRoot==null){
+        if (toolRoot == null) {
             return false;
         }
         System.out.println("工具根目录:" + toolRoot);
+        Properties properties = new Properties();
+        properties.put("root", toolRoot);
+        Map<String, String> variable = toolRoute.getVariable();
+        properties.putAll(variable);
+        List<String> operate = toolRoute.getOperate();
+        for (String str : operate) {
+            List<OperateItem> parse = rpnProcessor.parse(PlaceholderHelper.to(str, properties));
+        }
+        String str = "xml D:\\codeup\\dev-env-arrange\\src\\test\\resources\\apache-maven-3.9.1\\conf\\settings.xml > /d:settings/d:localRepository  \"test\" += D:\\codeup\\dev-env-arrange\\src\\test\\resources\\apache-maven-3.9.1\\conf\\settings.xml < ";
+        rpnProcessor.execute(rpnProcessor.parse(str));
         return false;
     }
 

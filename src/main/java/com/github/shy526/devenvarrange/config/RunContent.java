@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -26,5 +27,10 @@ public class RunContent {
 
     public <T> T getBean(Class<T> tClass, String name) {
         return applicationContext.getBean(tClass, name);
+    }
+
+    public <T>  Map<String, T> getBean(Class<T> tClass) {
+        return applicationContext.getBeansOfType(tClass);
+
     }
 }

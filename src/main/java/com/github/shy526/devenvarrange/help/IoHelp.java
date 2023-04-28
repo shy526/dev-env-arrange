@@ -3,7 +3,6 @@ package com.github.shy526.devenvarrange.help;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -16,7 +15,7 @@ public class IoHelp {
         byte[] bytes = new byte[1024 * 10];
         int len = -1;
         try {
-            while ((len = in.read(bytes, 0, bytes.length)) != 0) {
+            while ((len = in.read(bytes)) != -1) {
                 out.write(bytes, 0, len);
             }
             out.flush();
@@ -31,19 +30,23 @@ public class IoHelp {
 
     public static boolean copy(Path source, Path target) {
         boolean result = false;
-        byte[] bytes = new byte[1024 * 10];
-        int len = -1;
-        try (
-                BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(source));
-                BufferedOutputStream bos = new BufferedOutputStream(Files.newOutputStream(target));
-        ) {
+
+        BufferedInputStream bis = null;
+        BufferedOutputStream bos = null;
+        try {
+            bis = new BufferedInputStream(Files.newInputStream(source));
+            bos = new BufferedOutputStream(Files.newOutputStream(target));
+            byte[] bytes = new byte[1024 * 10];
+            int len = -1;
             while ((len = bis.read(bytes, 0, bytes.length)) != 0) {
                 bos.write(bytes, 0, len);
             }
             bos.flush();
             result = true;
         } catch (Exception ignored) {
-            result = false;
+        } finally {
+            close(bis, InputStream.class);
+            close(bos, InputStream.class);
         }
         return result;
     }
@@ -54,7 +57,7 @@ public class IoHelp {
         }
         String root = null;
         boolean flag = true;
-        try (ZipFile zipFile = new ZipFile(zipPath.toFile());) {
+        try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry item = entries.nextElement();

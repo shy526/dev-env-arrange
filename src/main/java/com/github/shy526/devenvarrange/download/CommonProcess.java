@@ -85,12 +85,11 @@ public class CommonProcess implements DownloadProcess {
         Path filePath = Paths.get(path).resolve(fileName);
         File file = filePath.toFile();
         boolean temp = file.exists() && file.delete();
-        try (
-                HttpResult httpResult = httpClientService.get(downloadUrl);
-                CloseableHttpResponse response = httpResult.getResponse();
-                InputStream in = response.getEntity().getContent();
-                BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(filePath))
-        ) {
+        try {
+            HttpResult httpResult = httpClientService.get(downloadUrl);
+            CloseableHttpResponse response = httpResult.getResponse();
+            InputStream in = response.getEntity().getContent();
+            BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(filePath));
             IoHelp.copy(in, out, true);
         } catch (Exception e) {
             log.error(e.getMessage(), e);

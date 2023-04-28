@@ -1,5 +1,6 @@
 package com.github.shy526.devenvarrange.command;
 
+import com.github.shy526.devenvarrange.config.Config;
 import com.github.shy526.devenvarrange.download.DownloadProcess;
 import com.github.shy526.devenvarrange.impl.CoreService;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
@@ -16,7 +17,8 @@ import java.util.*;
 @ShellComponent
 @Slf4j
 public class ShellCommand {
-
+    @Autowired
+    Config config;
     @Autowired
     private CoreService coreService;
 
@@ -52,7 +54,7 @@ public class ShellCommand {
 
     @ShellMethod(value = "配置工具", key = {"install", "i"})
     public boolean installTool(String name ,String version){
-        coreService.insert(name,version,"E:\\java-project\\dev-env-arrange\\src\\test\\resources");
+        coreService.insert(name,version,config.getEnv());
 
         return false;
     }

@@ -10,7 +10,7 @@ public class OperateResult {
     private List<OperateItem> result;
     private List<OperateItem> operand;
 
-    private boolean success = false;
+    private Boolean success=false;
 
     public OperateResult(List<OperateItem> result, List<OperateItem> operand, boolean success) {
         this.result = result;
@@ -28,8 +28,10 @@ public class OperateResult {
 
     public static OperateResult of(List<OperateItem> result, List<OperateItem> operand, boolean success) {
         if (success) {
-            return fail(operand);
+            return success(result, operand);
         }
-        return success(result, operand);
+        return fail(operand);
     }
+
+
 }

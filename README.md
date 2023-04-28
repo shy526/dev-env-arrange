@@ -15,7 +15,7 @@
 > 
 >> `D:/settings.xml` 要操作的文件
 > 
->> `>`  `D:/settings.xml` 转换为一个可以操作 `Document`
+>> `>` 可以将 `D:/settings.xml` 转换为一个可以操作 `Document`
 > 
 >> `/d:settings/d:localRepository` 操作节点的xpath
 > 

@@ -10,8 +10,8 @@ httpClientService:
     idleTime: 5000
     delay: 5000
 config:
-  route: "D:/codeup/dev-env-arrange/src/test/resources/route"
-  env: "D:/codeup/dev-env-arrange/src/test/resources"
+  route: "E:/java-project/dev-env-arrange/src/test/resources/route"
+  env: "E:/java-project/dev-env-arrange/src/test/resources"
 spring:
   shell:
     command:

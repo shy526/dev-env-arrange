@@ -12,6 +12,7 @@ import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
 import com.github.shy526.devenvarrange.rpn.RpnProcessor;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
+import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 import com.github.shy526.http.HttpClientService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,27 +70,28 @@ public class CoreServiceImpl implements CoreService {
         if (toolRoute == null) {
             return false;
         }
-        System.out.println("下载中");
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
         Path zipPath = bean.downloadFile(toolRoute, version, path);
-        System.out.println("下载中完毕");
-        System.out.println("解压中:" + zipPath);
+        System.out.println("unZip:" + zipPath);
         Path toolRoot = IoHelp.unZip(zipPath, Paths.get(path));
         if (toolRoot == null) {
             return false;
         }
-        System.out.println("工具根目录:" + toolRoot);
+        System.out.println("root:" + toolRoot);
         Properties properties = new Properties();
-        properties.put("root", toolRoot);
+        properties.put("root", toolRoot.toString());
         Map<String, String> variable = toolRoute.getVariable();
-        properties.putAll(variable);
+        variable.forEach((key, val) -> {
+            properties.put(key, PlaceholderHelper.to(val, properties));
+        });
         List<String> operate = toolRoute.getOperate();
         for (String str : operate) {
-            List<OperateItem> parse = rpnProcessor.parse(PlaceholderHelper.to(str, properties));
+            String rpn = PlaceholderHelper.to(str, properties);
+            List<OperateItem> parse = rpnProcessor.parse(rpn);
+            OperateResult execute = rpnProcessor.execute(parse);
+            System.out.println(rpn+ "----->" + execute.getSuccess());
         }
-        String str = "xml D:\\codeup\\dev-env-arrange\\src\\test\\resources\\apache-maven-3.9.1\\conf\\settings.xml > /d:settings/d:localRepository  \"test\" += D:\\codeup\\dev-env-arrange\\src\\test\\resources\\apache-maven-3.9.1\\conf\\settings.xml < ";
-        rpnProcessor.execute(rpnProcessor.parse(str));
         return false;
     }
 

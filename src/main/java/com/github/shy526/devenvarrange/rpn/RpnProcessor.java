@@ -1,20 +1,20 @@
 package com.github.shy526.devenvarrange.rpn;
 
 import com.github.shy526.devenvarrange.config.RunContent;
-import com.github.shy526.devenvarrange.help.PlaceholderHelper;
-import com.github.shy526.devenvarrange.rpn.fils.FileSymbol;
+import com.github.shy526.devenvarrange.rpn.files.FileSymbol;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 import com.github.shy526.devenvarrange.rpn.oo.OperateType;
 import com.github.shy526.devenvarrange.rpn.xml.XmlSymbol;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 @Component
+@Slf4j
 public class RpnProcessor {
     @Autowired
     private RunContent runContent;
@@ -35,6 +35,7 @@ public class RpnProcessor {
             }
             result = symbol.execute(params);
             Boolean success = result.getSuccess();
+            log.error(symbol.getSymbolStr()+":"+success);
             if (!success) {
                 break;
             }

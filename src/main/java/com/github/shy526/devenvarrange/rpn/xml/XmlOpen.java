@@ -48,7 +48,8 @@ public class XmlOpen implements XmlSymbol {
             }
             reader.getDocumentFactory().setXPathNamespaceURIs(namespaceMap);
             item = OperateItem.of(doc, OperateType.VALUE);
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.error(e.getMessage(),e);
         }
         boolean temp = item != null;
         return OperateResult.of(temp ? Lists.newArrayList(item) : null, Lists.newArrayList(source), temp);

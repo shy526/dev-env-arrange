@@ -6,17 +6,23 @@ import com.github.shy526.devenvarrange.impl.CoreService;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
 import lombok.extern.slf4j.Slf4j;
+import org.jline.terminal.Terminal;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.Shell;
+import org.springframework.shell.standard.AbstractShellComponent;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.table.*;
 import org.springframework.util.FileCopyUtils;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 @ShellComponent
 @Slf4j
-public class ShellCommand {
+public class ShellCommand extends AbstractShellComponent {
     @Autowired
     Config config;
     @Autowired
@@ -28,7 +34,8 @@ public class ShellCommand {
         LinkedHashMap<String, Object> head = new LinkedHashMap<>();
         head.put("name", "name");
         head.put("download.urlRoot[0]", "downloadRootUrl");
-
+        Terminal terminal = getTerminal();
+        PrintWriter writer = terminal.writer();
         return buildTable(toolRoutes, head);
     }
 

@@ -4,6 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Enumeration;
+import java.util.function.Consumer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -11,12 +12,17 @@ import java.util.zip.ZipFile;
  * io处理工具
  */
 public class IoHelp {
-    public static void copy(InputStream in, OutputStream out, boolean flag) {
-        byte[] bytes = new byte[1024 * 10];
+    public static void copy(InputStream in, OutputStream out, boolean flag, Consumer<Long> consumer) {
+        byte[] bytes = new byte[1024 * 1024];
         int len = -1;
+        long speed = 0;
         try {
             while ((len = in.read(bytes)) != -1) {
                 out.write(bytes, 0, len);
+                speed+=len;
+                if (consumer!=null){
+                    consumer.accept(speed);
+                }
             }
             out.flush();
         } catch (Exception ignored) {
@@ -74,7 +80,7 @@ public class IoHelp {
                 boolean temp = parentFile.exists() || parentFile.mkdirs();
                 try (InputStream in = new BufferedInputStream(zipFile.getInputStream(item)); OutputStream out = new BufferedOutputStream(Files.newOutputStream(itemPath));
                 ) {
-                    IoHelp.copy(in, out, false);
+                    IoHelp.copy(in, out, false,null);
                 } catch (Exception ignored) {
                 }
                 flag = false;

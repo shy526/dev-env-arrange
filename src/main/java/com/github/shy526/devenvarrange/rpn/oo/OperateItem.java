@@ -23,4 +23,9 @@ public class OperateItem {
         }
         throw new RuntimeException("val error");
     }
+
+    @Override
+    public String toString() {
+        return val.toString();
+    }
 }

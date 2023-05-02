@@ -9,7 +9,10 @@ import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.jline.utils.AttributedString;
+import org.jline.utils.AttributedStyle;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -84,13 +87,25 @@ public class CommonProcess implements DownloadProcess {
         String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
         Path filePath = Paths.get(path).resolve(fileName);
         File file = filePath.toFile();
-        boolean temp = file.exists() && file.delete();
+        if (file.exists()){
+            return filePath;
+        }
         try {
             HttpResult httpResult = httpClientService.get(downloadUrl);
+            String totalMb = String.format("%.2f", httpResult.getResponse().getEntity().getContentLength() / 1024f);
             CloseableHttpResponse response = httpResult.getResponse();
             InputStream in = response.getEntity().getContent();
             BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(filePath));
-            IoHelp.copy(in, out, true);
+            System.out.println(downloadUrl + "  ->  " + filePath.toString());
+            String format = totalMb + "kb/" + "%skb";
+            IoHelp.copy(in, out, true, speed -> {
+                String speedMb =String.format("%.2f", speed / 1024f);
+                String str = String.format(format, speedMb);
+                System.out.print(str.replaceAll(".{1}", "\b"));
+                System.out.print(str);
+
+            });
+            System.out.print("\r\n");
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

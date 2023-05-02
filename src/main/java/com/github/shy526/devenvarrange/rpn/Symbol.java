@@ -16,4 +16,5 @@ public interface Symbol {
     default int getOperandNum() {
         return OPERAND_NUM;
     }
+
 }

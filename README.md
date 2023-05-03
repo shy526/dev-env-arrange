@@ -68,6 +68,7 @@
 1. `>`   读取xml  输入path     返回 doc
 2. `<`   保存xml  输入doc path,返回 doc 
 3. `+=`  修改xml  输入doc xpath value 返回doc
+4. `+`   添加标签  输入doc xpath tagName 返回doc 
 
 ### xml 操作列子
 > `xml D:/settings.xml < /d:settings/d:localRepository  D:/rep += D:/settings.xml <`

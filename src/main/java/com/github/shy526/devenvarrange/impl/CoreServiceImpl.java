@@ -90,7 +90,7 @@ public class CoreServiceImpl implements CoreService {
             String rpn = PlaceholderHelper.to(str, properties);
             List<OperateItem> parse = rpnProcessor.parse(rpn);
             OperateResult execute = rpnProcessor.execute(parse);
-            System.out.println(rpn+ "----->" + execute.getSuccess());
+            System.out.println(rpn+ "    :    " + execute.getSuccess());
         }
         return false;
     }

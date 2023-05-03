@@ -1,6 +1,7 @@
 package com.github.shy526.devenvarrange.rpn.xml;
 
 
+import com.github.shy526.devenvarrange.help.XmlHelp;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 import com.google.common.collect.Lists;
@@ -21,21 +22,14 @@ public class XmlUpdate implements XmlSymbol {
         OperateItem docSource = items.get(2);
         Document doc = docSource.getVal(Document.class);
         String xPath = xPathO.getVal(String.class);
-        String index = xPath.substring(0, 2);
-        if (index.equals("//")) {
+        if (!XmlHelp.ifAbsXpath(xPath)) {
             return null;
         }
         Node node = doc.selectSingleNode(xPath);
         if (node == null) {
-            int indexOf = xPath.lastIndexOf("/");
-            String[] split = xPath.substring(indexOf + 1).split(":");
-            String tagName = "";
-            tagName = split.length > 1 ? split[1] : split[0];
-            String paren = xPath.substring(0, indexOf);
-            Node parenNode = doc.selectSingleNode(paren);
-            if (parenNode != null) {
-                node = ((Element) parenNode).addElement(tagName);
-            }
+            String tagName = XmlHelp.getAbsXPathTagName(xPath);
+            String xPathParen = XmlHelp.getAbsXPathParen(xPath);
+            node=XmlHelp.createTag(doc, xPathParen,tagName);
         }
         boolean temp = node != null;
         if (temp) {

@@ -35,7 +35,6 @@ public class RpnProcessor {
             }
             result = symbol.execute(params);
             Boolean success = result.getSuccess();
-            log.error(symbol.getSymbolStr()+":"+success);
             if (!success) {
                 break;
             }

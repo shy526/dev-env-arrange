@@ -36,7 +36,7 @@ public class XmlUpdate implements XmlSymbol {
             node.setText(source.getVal(String.class));
         }
 
-        return OperateResult.of(temp ? Lists.newArrayList(docSource) : null, Lists.newArrayList(source, xPathO, docSource), temp);
+        return OperateResult.of(temp ? Lists.newArrayList(docSource) : null,items, temp);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class FileCopy implements FileSymbol {
     public OperateResult execute(List<OperateItem> operateItems) {
         OperateItem source = operateItems.get(0);
         OperateItem target = operateItems.get(1);
-        return OperateResult.of(Lists.newArrayList(target), Lists.newArrayList(source, target), IoHelp.copy(source.getVal(Path.class), target.getVal(Path.class)));
+        return OperateResult.of(Lists.newArrayList(target), operateItems, IoHelp.copy(source.getVal(Path.class), target.getVal(Path.class)));
     }
 
     @Override

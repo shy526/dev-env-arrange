@@ -1,21 +1,61 @@
 package com.github.shy526.devenvarrange.rpn;
 
 import com.github.shy526.devenvarrange.config.RunContent;
-import com.github.shy526.devenvarrange.rpn.files.FileSymbol;
+import com.github.shy526.devenvarrange.help.ClassHelp;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 import com.github.shy526.devenvarrange.rpn.oo.OperateType;
-import com.github.shy526.devenvarrange.rpn.xml.XmlSymbol;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.net.URL;
 import java.util.*;
 
 
 @Component
 @Slf4j
 public class RpnProcessor {
+
+    private static final Map<String,Class<? extends Symbol>> SYMBOL_MAP;
+
+    /**
+     * 初始化符号
+     */
+    static {
+        SYMBOL_MAP=new HashMap<>();
+        Package aPackage =RpnProcessor.class.getPackage();
+        String packagePath = ClassHelp.package2packagePath(aPackage.getName());
+        List<URL> resources = ClassHelp.getResources(packagePath);
+        List<File> packages = new ArrayList<>();
+        for (URL resource : resources) {
+            File file = new File(resource.getPath());
+            File[] files = file.listFiles(File::isDirectory);
+            if (files == null) {
+                continue;
+            }
+            packages.addAll(Lists.newArrayList(files));
+        }
+
+        List<URL> rootDir = ClassHelp.getRootDir();
+        for (File file : packages) {
+            String key = file.getName();
+            File[] files = file.listFiles(File::isFile);
+            if (files == null) {
+                continue;
+            }
+            for (File item : files) {
+                Class<?> aClass = ClassHelp.uriPath2Class(item.toURI().getPath(), rootDir);
+                if (Symbol.class.isAssignableFrom(aClass)) {
+                    SYMBOL_MAP.put(key, (Class<? extends Symbol>) aClass);
+                    break;
+                }
+            }
+        }
+    }
+
     @Autowired
     private RunContent runContent;
 
@@ -55,12 +95,9 @@ public class RpnProcessor {
         String sysRpn = items[0];
         int sysRpnLen = sysRpn.length();
         List<Symbol> symbols = null;
-        if (sysRpn.equals("xml")) {
-            Map<String, XmlSymbol> bean = runContent.getBean(XmlSymbol.class);
-            symbols = new ArrayList<>(bean.values());
-        } else if (sysRpn.equals("file")) {
-            Map<String, FileSymbol> bean = runContent.getBean(FileSymbol.class);
-            symbols = new ArrayList<>(bean.values());
+        Class<? extends Symbol> aClass = SYMBOL_MAP.get(sysRpn);
+        if (aClass != null) {
+            symbols = getSymbols(aClass);
         }
         if (symbols == null) {
             return result;
@@ -77,5 +114,13 @@ public class RpnProcessor {
 
         }
         return result;
+    }
+
+
+    private List<Symbol> getSymbols(Class<? extends Symbol> symbolClass) {
+        List<Symbol> symbols;
+        Map<String, ? extends Symbol> bean = runContent.getBean(symbolClass);
+        symbols = new ArrayList<>(bean.values());
+        return symbols;
     }
 }

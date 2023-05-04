@@ -52,7 +52,7 @@ public class XmlOpen implements XmlSymbol {
             log.error(e.getMessage(),e);
         }
         boolean temp = item != null;
-        return OperateResult.of(temp ? Lists.newArrayList(item) : null, Lists.newArrayList(source), temp);
+        return OperateResult.of(temp ? Lists.newArrayList(item) : null, items, temp);
     }
 
     @Override

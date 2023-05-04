@@ -38,7 +38,7 @@ public class XmlSave implements XmlSymbol {
                 }
             }
         }
-        return OperateResult.of(Lists.newArrayList(doc), Lists.newArrayList(doc, path), temp);
+        return OperateResult.of(Lists.newArrayList(doc),items, temp);
     }
 
     @Override

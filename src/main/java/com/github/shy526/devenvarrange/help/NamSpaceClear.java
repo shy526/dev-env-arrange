@@ -1,4 +1,4 @@
-package com.github.shy526.devenvarrange.rpn.xml;
+package com.github.shy526.devenvarrange.help;
 
 import org.dom4j.*;
 import org.dom4j.tree.DefaultElement;

@@ -32,6 +32,11 @@ public class OperateResult {
         }
         return fail(operand);
     }
-
+    public static OperateResult of(List<OperateItem> operand, boolean success) {
+        if (success) {
+            return success(null, operand);
+        }
+        return fail(operand);
+    }
 
 }

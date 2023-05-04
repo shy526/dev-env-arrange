@@ -25,7 +25,7 @@ public class XmlAdd implements XmlSymbol {
         if (tag == null) {
             return OperateResult.of(Lists.newArrayList(source), Lists.newArrayList(source, xPath, tagName), false);
         }
-        return OperateResult.of(Lists.newArrayList(source), Lists.newArrayList(source, xPath, tagName), true);
+        return OperateResult.of(Lists.newArrayList(source), items, true);
     }
 
     @Override

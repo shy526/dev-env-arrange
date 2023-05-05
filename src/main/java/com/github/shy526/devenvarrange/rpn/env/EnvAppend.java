@@ -13,8 +13,8 @@ import java.util.List;
 public class EnvAppend extends AbsEnv {
     @Override
     public OperateResult execute(List<OperateItem> items) {
-        OperateItem keyParma = items.get(0);
-        OperateItem valParma = items.get(1);
+        OperateItem valParma = items.get(0);
+        OperateItem keyParma = items.get(1);
         String key = keyParma.getVal(String.class);
         String val = valParma.getVal(String.class);
         RegOperate regOperate = getRegOperate();
@@ -24,7 +24,13 @@ public class EnvAppend extends AbsEnv {
             String sourceVal = regValue.getValue();
             String[] sourceValArray = sourceVal.split(";");
             if (!Arrays.asList(sourceValArray).contains(val)) {
-                regValue.setValue(sourceVal + ";" + val);
+                char c = sourceVal.charAt(sourceVal.length()-1);
+                if (";".equals(c+"")) {
+                    sourceVal += val;
+                } else {
+                    sourceVal += ";" + val;
+                }
+                regValue.setValue(sourceVal);
                 flag = regOperate.setRegValue(regValue);
             }
 

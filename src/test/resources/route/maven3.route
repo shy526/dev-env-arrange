@@ -18,6 +18,7 @@
     },
     "operate":[
         "xml ${config} > /d:settings/d:localRepository  ${root}/re += ${config} <",
-        "xml ${config} > /d:settings/d:mirrors mirror + ${mirrorXpath}id aliyunmaven += ${mirrorXpath}mirrorOf * += ${mirrorXpath}name 阿里云公共仓库 += ${mirrorXpath}url https://maven.aliyun.com/repository/public += ${config} <"
+        "xml ${config} > /d:settings/d:mirrors mirror + ${mirrorXpath}id aliyunmaven += ${mirrorXpath}mirrorOf * += ${mirrorXpath}name 阿里云公共仓库 += ${mirrorXpath}url https://maven.aliyun.com/repository/public += ${config} <",
+        "env MAVEN3_HOME_SHY ${root} + PATH %MAVEN3_HOME_SHY%/bin += <"
         ]
 }

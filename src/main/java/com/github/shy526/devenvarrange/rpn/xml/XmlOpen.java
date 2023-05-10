@@ -33,12 +33,12 @@ import static java.nio.file.Files.newInputStream;
 public class XmlOpen implements XmlSymbol {
     @Override
     public OperateResult execute(List<OperateItem> items) {
-        OperateItem source = items.get(0);
+        String source = getStrVal(items, 0);
         SAXReader reader = new SAXReader();
 
-        OperateItem item = null;
+        Document doc = null;
         try {
-            Document doc = (Document) reader.read(source.getVal(String.class));
+            doc =reader.read(source);
             Map<String, String> namespaceMap = new HashMap<>();
             Element rootElement = doc.getRootElement();
             namespaceMap.put("d", rootElement.getNamespaceURI());
@@ -47,12 +47,10 @@ public class XmlOpen implements XmlSymbol {
                 namespaceMap.put(namespace.getPrefix(), namespace.getURI());
             }
             reader.getDocumentFactory().setXPathNamespaceURIs(namespaceMap);
-            item = OperateItem.of(doc, OperateType.VALUE);
         } catch (Exception e) {
             log.error(e.getMessage(),e);
         }
-        boolean temp = item != null;
-        return OperateResult.of(temp ? Lists.newArrayList(item) : null, items, temp);
+        return OperateResult.of(items, doc != null,doc);
     }
 
     @Override

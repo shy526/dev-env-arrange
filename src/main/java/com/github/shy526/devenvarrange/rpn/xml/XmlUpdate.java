@@ -17,11 +17,10 @@ import java.util.List;
 public class XmlUpdate implements XmlSymbol {
     @Override
     public OperateResult execute(List<OperateItem> items) {
-        OperateItem source = items.get(0);
-        OperateItem xPathO = items.get(1);
-        OperateItem docSource = items.get(2);
-        Document doc = docSource.getVal(Document.class);
-        String xPath = xPathO.getVal(String.class);
+
+        String source = getStrVal(items, 0);
+        String xPath = getStrVal(items, 1);
+        Document doc = getDocVal(items, 2);
         if (!XmlHelp.ifAbsXpath(xPath)) {
             return null;
         }
@@ -29,14 +28,13 @@ public class XmlUpdate implements XmlSymbol {
         if (node == null) {
             String tagName = XmlHelp.getAbsXPathTagName(xPath);
             String xPathParen = XmlHelp.getAbsXPathParen(xPath);
-            node=XmlHelp.createTag(doc, xPathParen,tagName);
+            node = XmlHelp.createTag(doc, xPathParen, tagName);
         }
         boolean temp = node != null;
         if (temp) {
-            node.setText(source.getVal(String.class));
+            node.setText(source);
         }
-
-        return OperateResult.of(temp ? Lists.newArrayList(docSource) : null,items, temp);
+        return OperateResult.of(items, temp, doc);
     }
 
     @Override

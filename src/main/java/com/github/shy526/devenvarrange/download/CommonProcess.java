@@ -1,18 +1,15 @@
 package com.github.shy526.devenvarrange.download;
 
-import com.github.shy526.devenvarrange.help.PlaceholderHelper;
 import com.github.shy526.devenvarrange.config.Config;
 import com.github.shy526.devenvarrange.help.IoHelp;
+import com.github.shy526.devenvarrange.help.PlaceholderHelper;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
 import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
@@ -25,7 +22,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

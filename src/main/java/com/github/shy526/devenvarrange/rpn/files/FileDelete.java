@@ -13,17 +13,17 @@ import java.util.List;
 public class FileDelete implements FileSymbol {
     @Override
     public OperateResult execute(List<OperateItem> operateItems) {
-        OperateItem source = operateItems.get(0);
-        File file = source.getVal(Path.class).toFile();
+        Path source = getVal(operateItems, 0);
+        File file = source.toFile();
         boolean temp = true;
         if (file.exists()) {
             temp = file.delete();
         }
-        return OperateResult.of(null, Lists.newArrayList(source), temp);
+        return OperateResult.of(operateItems, temp);
     }
 
     @Override
     public String getSymbolStr() {
-        return "!>";
+        return "-";
     }
 }

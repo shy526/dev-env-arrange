@@ -16,6 +16,9 @@ public class OperateItem {
     public static OperateItem of(Object value, OperateType type) {
         return new OperateItem(value, type);
     }
+    public static OperateItem ofVal(Object value) {
+        return new OperateItem(value, OperateType.VALUE);
+    }
 
     public <T> T getVal(Class<T> tClass) {
         if (tClass.isInstance(val)) {

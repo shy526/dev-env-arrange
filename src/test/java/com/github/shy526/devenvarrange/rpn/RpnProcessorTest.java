@@ -26,7 +26,7 @@ class RpnProcessorTest {
         //path D:\javaEx\apache-maven-3.5.3\bin
         String rpn1="env MAVEN_HOME D:\\javaEx\\apache-maven-3.5.3 + MAVEN_BIN %MAVEN_HOME%\\bin + < MAVEN_BIN2 %maven_bin%\\xx + <";
         String rpn="env MAVEN_HOME D:\\javaEx\\apache-maven-3.5.3 + Path %MAVEN_HOME%\\bin += <";
-        List<OperateItem> parse = rpnProcessor.parse("env <");
+        List<OperateItem> parse = rpnProcessor.parse(rpn1);
         OperateResult execute = rpnProcessor.execute(parse);
         System.out.println("execute = " + execute.getSuccess());
 

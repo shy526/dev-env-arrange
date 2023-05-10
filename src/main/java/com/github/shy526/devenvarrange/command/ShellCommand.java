@@ -63,7 +63,6 @@ public class ShellCommand extends AbstractShellComponent {
     @ShellMethod(value = "配置工具", key = {"install", "i"})
     public boolean installTool(String name ,String version){
         coreService.insert(name,version,config.getEnv());
-
         return false;
     }
 }

@@ -2,6 +2,7 @@ package com.github.shy526.devenvarrange.rpn.oo;
 
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -10,7 +11,7 @@ public class OperateResult {
     private List<OperateItem> result;
     private List<OperateItem> operand;
 
-    private Boolean success=false;
+    private Boolean success = false;
 
     public OperateResult(List<OperateItem> result, List<OperateItem> operand, boolean success) {
         this.result = result;
@@ -26,12 +27,17 @@ public class OperateResult {
         return new OperateResult(null, operand, false);
     }
 
-    public static OperateResult of(List<OperateItem> result, List<OperateItem> operand, boolean success) {
+    public static OperateResult of(List<OperateItem> operand, boolean success, Object... results) {
         if (success) {
-            return success(result, operand);
+            List<OperateItem> operateItems = new ArrayList<>();
+            for (Object result : results) {
+                operateItems.add(OperateItem.ofVal(result));
+            }
+            return success(operateItems, operand);
         }
         return fail(operand);
     }
+
     public static OperateResult of(List<OperateItem> operand, boolean success) {
         if (success) {
             return success(null, operand);

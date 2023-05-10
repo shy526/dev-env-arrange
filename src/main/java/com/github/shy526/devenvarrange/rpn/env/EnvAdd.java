@@ -13,13 +13,10 @@ import java.util.List;
 public class EnvAdd extends AbsEnv {
     @Override
     public OperateResult execute(List<OperateItem> items) {
-        OperateItem valParma =  items.get(0);
-        OperateItem keyParma = items.get(1);
-        String key = keyParma.getVal(String.class);
-        String val = valParma.getVal(String.class);
+        String val = getStrVal(items,0);
+        String key = getStrVal(items,1);
         RegOperate regOperate = getRegOperate();
-        RegValue regValue = regOperate.getRegValue(key);
-       if (regValue == null) {
+        RegValue regValue = regOperate.getRegValue(key);if (regValue == null) {
             regValue = val.contains("%") ? RegTypeEnum.REG_EXPAND_SZ.of(key, val) : RegTypeEnum.REG_SZ.of(key, val);
         }
         regValue.setValue(val);

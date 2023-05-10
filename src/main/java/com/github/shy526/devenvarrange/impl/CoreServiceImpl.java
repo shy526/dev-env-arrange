@@ -2,6 +2,7 @@ package com.github.shy526.devenvarrange.impl;
 
 
 import com.alibaba.fastjson.JSON;
+import com.github.shy526.devenvarrange.command.ShellCommand;
 import com.github.shy526.devenvarrange.config.Config;
 import com.github.shy526.devenvarrange.config.RunContent;
 import com.github.shy526.devenvarrange.download.CommonProcess;
@@ -14,6 +15,7 @@ import com.github.shy526.devenvarrange.rpn.RpnProcessor;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 import com.github.shy526.http.HttpClientService;
+import com.github.shy526.regedit.shell.ShellClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

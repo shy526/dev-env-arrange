@@ -25,7 +25,7 @@
     },
     "operate":[
         "xml ${config} > /d:settings/d:localRepository  \"test\" += ${config} <",
-        "sysEnv:MAVEN_HOME_SHY ${root} = path ${PATH} ;%MAVEN_HOME_SHY%/bin +"
+        "env:MAVEN_HOME_SHY ${root} + path ${PATH} ;%MAVEN_HOME_SHY%/bin +="
         ]
 }
 ```
@@ -96,6 +96,12 @@
 
 1. `+=` 修改环境变量原来的值+上这次的值;隔开
 2. `+`  创建一个环境变量 如果存在就覆盖
-3.  `-` 删除环境变量
+3.  `<` 刷新环境变量
+
+### 文件操作支持
+
+1. `>>` 拷贝文件
+2. `-`  删除文件
+3.  `>` 移动文件
 
 # 未完成

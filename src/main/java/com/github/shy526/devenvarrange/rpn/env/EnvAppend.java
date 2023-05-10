@@ -13,10 +13,8 @@ import java.util.List;
 public class EnvAppend extends AbsEnv {
     @Override
     public OperateResult execute(List<OperateItem> items) {
-        OperateItem valParma = items.get(0);
-        OperateItem keyParma = items.get(1);
-        String key = keyParma.getVal(String.class);
-        String val = valParma.getVal(String.class);
+        String val = getStrVal(items,0);
+        String key = getStrVal(items,1);
         RegOperate regOperate = getRegOperate();
         RegValue regValue = regOperate.getRegValue(key);
         boolean flag = regValue != null;

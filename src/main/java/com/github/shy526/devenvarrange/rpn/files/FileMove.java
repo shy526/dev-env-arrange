@@ -3,7 +3,6 @@ package com.github.shy526.devenvarrange.rpn.files;
 import com.github.shy526.devenvarrange.help.IoHelp;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
-import com.google.common.collect.Lists;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -17,14 +16,19 @@ import java.util.List;
 public class FileMove implements FileSymbol {
     @Override
     public OperateResult execute(List<OperateItem> operateItems) {
-        OperateItem source = operateItems.get(0);
-        OperateItem target = operateItems.get(1);
-        boolean temp = IoHelp.copy(source.getVal(Path.class), source.getVal(Path.class));
-        File file = source.getVal(Path.class).toFile();
-        if (temp && file.exists()) {
-            temp = file.delete();
+        Path source = getVal(operateItems, 0);
+        Path target = getVal(operateItems, 1);
+        File sourceFile = source.toFile();
+        if (!sourceFile.exists()) {
+            return OperateResult.fail(operateItems);
         }
-        return OperateResult.of(Lists.newArrayList(target), Lists.newArrayList(source, target), temp);
+        boolean temp = IoHelp.copy(source, target);
+        File targetFile = target.toFile();
+        temp = targetFile.exists();
+        if (temp) {
+            sourceFile.delete();
+        }
+        return OperateResult.of(operateItems, temp, target.toString());
     }
 
     @Override

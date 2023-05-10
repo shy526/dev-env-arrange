@@ -3,6 +3,7 @@ package com.github.shy526.devenvarrange.rpn.xml;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 import com.google.common.collect.Lists;
+import org.dom4j.Document;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.springframework.stereotype.Component;
@@ -16,14 +17,14 @@ import java.util.List;
 public class XmlSave implements XmlSymbol {
     @Override
     public OperateResult execute(List<OperateItem> items) {
-        OperateItem path = items.get(0);
-        OperateItem doc = items.get(1);
+        String path = getStrVal(items, 0);
+        Document doc = getDocVal(items, 1);
         OutputFormat format = OutputFormat.createPrettyPrint();
         XMLWriter xmlWriter = null;
         boolean temp = false;
         try {
-            xmlWriter = new XMLWriter(Files.newOutputStream(Paths.get(path.getVal(String.class))), format);
-            xmlWriter.write(doc.getVal());
+            xmlWriter = new XMLWriter(Files.newOutputStream(Paths.get(path)), format);
+            xmlWriter.write(doc);
             temp = true;
         } catch (Exception ignored) {
         } finally {
@@ -38,7 +39,7 @@ public class XmlSave implements XmlSymbol {
                 }
             }
         }
-        return OperateResult.of(Lists.newArrayList(doc),items, temp);
+        return OperateResult.of(items, temp,doc);
     }
 
     @Override

@@ -27,6 +27,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -73,6 +75,20 @@ public class CoreServiceImpl implements CoreService {
             return false;
         }
         ToolRoute.Download download = toolRoute.getDownload();
+        String check ="cmd /c "+toolRoute.getCheck();
+        ShellClient.exec(check,result->{
+            String versionPattern = download.getVersionPattern();
+            versionPattern = (versionPattern == null) ? "(\\d+\\.){2}\\d+" : versionPattern;
+            Pattern compile = Pattern.compile(versionPattern);
+            Matcher matcher = compile.matcher(result);
+            String versionMsg="未知版本";
+            if (matcher.find()){
+                versionMsg=matcher.group();
+            }
+            System.out.println("已经安装了:"+versionMsg);
+        },System.out::println);
+        return false;
+/*        ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
         Path zipPath = bean.downloadFile(toolRoute, version, path);
         System.out.println("unZip:" + zipPath);
@@ -93,8 +109,8 @@ public class CoreServiceImpl implements CoreService {
             List<OperateItem> parse = rpnProcessor.parse(rpn);
             OperateResult execute = rpnProcessor.execute(parse);
             System.out.println(rpn+ "    :    " + execute.getSuccess());
-        }
-        return false;
+        }*/
+        //return false;
     }
 
 

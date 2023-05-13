@@ -4,7 +4,7 @@
         "config":"${root}/conf/settings.xml",
         "mirrorXpath":"/d:settings/d:mirrors/d:mirror[last()]/d:"
     },
-    "check":"./mvn -v",
+    "check":"mvn -v",
     "download":{
         "urlRoot":[
             "https://dlcdn.apache.org/maven/maven-3"

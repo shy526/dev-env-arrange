@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * @author shy526
+ */
 @Data
 public class OperateResult {
     private List<OperateItem> result;

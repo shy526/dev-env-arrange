@@ -5,6 +5,9 @@ import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 
 import java.util.List;
 
+/**
+ * @author shy526
+ */
 public interface Symbol{
 
     int OPERAND_NUM = 2;

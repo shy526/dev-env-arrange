@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * @author shy526
+ */
 @Data
 public class ToolVersion {
     private String version;

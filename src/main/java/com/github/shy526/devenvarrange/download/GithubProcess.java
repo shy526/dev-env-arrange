@@ -1,30 +1,22 @@
 package com.github.shy526.devenvarrange.download;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.shy526.date.DateFormat;
 import com.github.shy526.devenvarrange.config.Config;
-import com.github.shy526.devenvarrange.help.IoHelp;
 import com.github.shy526.devenvarrange.help.PlaceholderHelper;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
 import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
-
+/**
+ * @author shy526
+ */
 @Component
 @Slf4j
 public class GithubProcess extends AbsDownloadProcess {

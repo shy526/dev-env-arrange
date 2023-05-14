@@ -10,6 +10,7 @@ import java.util.zip.ZipFile;
 
 /**
  * io处理工具
+ * @author shy526
  */
 public class IoHelp {
     public static void copy(InputStream in, OutputStream out, boolean flag, Consumer<Long> consumer) {

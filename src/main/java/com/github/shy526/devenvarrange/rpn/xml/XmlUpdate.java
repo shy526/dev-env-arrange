@@ -13,6 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * @author shy526
+ */
 @Component
 public class XmlUpdate implements XmlSymbol {
     @Override

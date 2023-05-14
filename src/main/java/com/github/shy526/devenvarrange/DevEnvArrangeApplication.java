@@ -1,9 +1,11 @@
 package com.github.shy526.devenvarrange;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * @author shy526
+ */
 @SpringBootApplication
 public class DevEnvArrangeApplication  {
 

@@ -4,6 +4,9 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.Node;
 
+/**
+ * @author shy526
+ */
 public class XmlHelp {
     private final static String SEPARATE = "/";
     private final static String PROTOCOL_SEPARATE = ":";

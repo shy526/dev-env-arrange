@@ -9,6 +9,9 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @author shy526
+ */
 public class ClassHelp {
     private static final String PATH_SEPARATE = "/";
     private static final String NAME_SEPARATE = ".";

@@ -31,6 +31,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * @author shy526
+ */
 @Service
 @Slf4j
 public class CoreServiceImpl implements CoreService {

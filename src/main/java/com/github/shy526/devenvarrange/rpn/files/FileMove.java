@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * 文件移动
+ * @author shy526
  */
 @Component
 public class FileMove implements FileSymbol {
@@ -26,7 +27,7 @@ public class FileMove implements FileSymbol {
         File targetFile = target.toFile();
         temp = targetFile.exists();
         if (temp) {
-            sourceFile.delete();
+            temp= sourceFile.delete();
         }
         return OperateResult.of(operateItems, temp, target.toString());
     }

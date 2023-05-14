@@ -9,7 +9,9 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
-
+/**
+ * @author sy526
+ */
 @Component
 public class FileCopy implements FileSymbol {
     @Override

@@ -22,6 +22,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
 
+/**
+ * @author shy526
+ */
 @Slf4j
 public abstract class AbsDownloadProcess implements DownloadProcess {
     protected HttpClientService httpClientService;

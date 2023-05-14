@@ -3,6 +3,10 @@ package com.github.shy526.devenvarrange.help;
 import org.dom4j.*;
 import org.dom4j.tree.DefaultElement;
 
+/**
+ * 清空xml协议
+ * @author shy526
+ */
 public class NamSpaceClear extends VisitorSupport {
     @Override
     public void visit(Document document) {

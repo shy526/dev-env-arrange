@@ -10,10 +10,16 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @author shy526
+ */
 @Component
 @ConfigurationProperties(prefix = "config")
 @Data
 public class Config {
+    /**
+     * route 文件下载地址
+     */
     private String route;
     private String env;
     private final String osName = System.getProperty("os.name").toLowerCase();

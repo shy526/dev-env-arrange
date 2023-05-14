@@ -28,6 +28,9 @@ import java.util.Map;
 
 import static java.nio.file.Files.newInputStream;
 
+/**
+ * @author shy526
+ */
 @Component
 @Slf4j
 public class XmlOpen implements XmlSymbol {

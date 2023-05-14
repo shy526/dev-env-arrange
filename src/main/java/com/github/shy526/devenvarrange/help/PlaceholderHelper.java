@@ -6,6 +6,7 @@ import java.util.Properties;
 
 /**
  * 占位符处理工具
+ * @author shy526
  */
 public class PlaceholderHelper {
     private static final PropertyPlaceholderHelper pph = new PropertyPlaceholderHelper("${", "}");

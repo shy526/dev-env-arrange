@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 
 /**
  * 通用下载处理器
+ * @author shy526
  */
 @Component
 @Slf4j

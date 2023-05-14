@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+/**
+ * jarFile处理
+ * @author shy526
+ */
 public class JarFileHelp {
 
     public static List<String> getSubPackages(JarFile jarFile, String packName) {

@@ -6,6 +6,9 @@ import org.dom4j.Document;
 
 import java.util.List;
 
+/**
+ * @author shy526
+ */
 public interface XmlSymbol extends Symbol {
 
     default Document getDocVal(List<OperateItem> operateItems, int index) {

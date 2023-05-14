@@ -1,27 +1,25 @@
 package com.github.shy526.devenvarrange.command;
 
 import com.github.shy526.devenvarrange.config.Config;
-import com.github.shy526.devenvarrange.download.DownloadProcess;
 import com.github.shy526.devenvarrange.impl.CoreService;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
-import com.github.shy526.devenvarrange.rpn.RpnProcessor;
 import lombok.extern.slf4j.Slf4j;
 import org.jline.terminal.Terminal;
-import org.jline.utils.AttributedString;
-import org.jline.utils.AttributedStyle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Shell;
 import org.springframework.shell.standard.AbstractShellComponent;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.*;
-import org.springframework.util.FileCopyUtils;
 
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
 
+/**
+ * @author shy526
+ */
 @ShellComponent
 @Slf4j
 public class ShellCommand extends AbstractShellComponent {

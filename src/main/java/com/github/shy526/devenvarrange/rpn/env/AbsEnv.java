@@ -8,8 +8,8 @@ import com.github.shy526.regedit.obj.RegRootEnum;
 
 
 public abstract class AbsEnv implements EnvSymbol {
-    private static final RegOperate regOperate = new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, AbsRegOperate.SYS_ENVIRONMENT);
+    private static final RegOperate REG_OPERATE = new CmdRegOperate(RegRootEnum.HKEY_LOCAL_MACHINE, AbsRegOperate.SYS_ENVIRONMENT);
     protected RegOperate getRegOperate(){
-        return regOperate;
+        return REG_OPERATE;
     }
 }

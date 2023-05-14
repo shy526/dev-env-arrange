@@ -3,6 +3,9 @@ package com.github.shy526.devenvarrange.rpn.oo;
 import lombok.Data;
 
 
+/**
+ * @author shy526
+ */
 @Data
 public class OperateItem {
     private Object val;

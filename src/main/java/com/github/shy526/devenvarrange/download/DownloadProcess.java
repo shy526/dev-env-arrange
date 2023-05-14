@@ -7,6 +7,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface DownloadProcess {
-    List<ToolVersion> getVersion(ToolRoute toolRoute);
+    List<ToolVersion> getVersion(ToolRoute toolRoute,Integer number);
     Path downloadFile(ToolRoute toolRoute, String version, String path);
+    String getDownloadUrl(ToolRoute toolRoute, String version);
+
+
 }

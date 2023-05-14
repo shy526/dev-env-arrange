@@ -15,6 +15,7 @@ import org.springframework.shell.Shell;
 import org.springframework.shell.standard.AbstractShellComponent;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.*;
 import org.springframework.util.FileCopyUtils;
 
@@ -41,8 +42,8 @@ public class ShellCommand extends AbstractShellComponent {
     }
 
     @ShellMethod(value = "列出工具支持的版本", key = {"versions", "v"})
-    public Table getVersions(String name) {
-        List<ToolVersion> versions = coreService.getVersions(name);
+    public Table getVersions(String name,@ShellOption(defaultValue ="5") Integer number) {
+        List<ToolVersion> versions = coreService.getVersions(name,number);
         if (versions.isEmpty()) {
             throw new RuntimeException("不支持或无法获取版本号", null);
         }

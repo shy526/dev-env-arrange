@@ -24,7 +24,7 @@ public class CustomJsonProcess implements DownloadProcess {
     private HttpClientService httpClientService;
 
     @Override
-    public List<ToolVersion> getVersion(ToolRoute toolRoute) {
+    public List<ToolVersion> getVersion(ToolRoute toolRoute,Integer number) {
         ToolRoute.Download download = toolRoute.getDownload();
         List<String> urlRoots = download.getUrlRoot();
         String urlRoot = urlRoots.get(0);
@@ -38,6 +38,11 @@ public class CustomJsonProcess implements DownloadProcess {
 
     @Override
     public Path downloadFile(ToolRoute toolRoute, String version, String path) {
+        return null;
+    }
+
+    @Override
+    public String getDownloadUrl(ToolRoute toolRoute, String version) {
         return null;
     }
 }

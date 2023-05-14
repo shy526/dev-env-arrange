@@ -8,7 +8,7 @@ import java.util.List;
 public interface CoreService {
     List<ToolRoute> getToolRoutes();
 
-    List<ToolVersion> getVersions(String name);
+    List<ToolVersion> getVersions(String name,Integer number);
 
     boolean insert(String name,String version,String path);
 }

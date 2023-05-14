@@ -1,6 +1,7 @@
 package com.github.shy526.devenvarrange.oo;
 
 
+import com.github.shy526.devenvarrange.constant.Constant;
 import lombok.Data;
 
 import java.util.List;
@@ -23,8 +24,6 @@ public class ToolRoute {
         private List<String> urlRoot;
         private String process;
         private String url;
-        private String versionPattern;
-        private Map<String, String> osFormat;
-
+        private String versionPattern= Constant.DEFAULT_VERSION_PATTERN_STR;
     }
 }

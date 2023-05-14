@@ -16,8 +16,11 @@ public class EnvAdd extends AbsEnv {
         String val = getStrVal(items,0);
         String key = getStrVal(items,1);
         RegOperate regOperate = getRegOperate();
-        RegValue regValue = regOperate.getRegValue(key);if (regValue == null) {
+        RegValue regValue = regOperate.getRegValue(key);
+        if (regValue == null) {
             regValue = val.contains("%") ? RegTypeEnum.REG_EXPAND_SZ.of(key, val) : RegTypeEnum.REG_SZ.of(key, val);
+        }else {
+            System.out.println(key+":"+regValue.getValue()+"->"+val);
         }
         regValue.setValue(val);
         boolean flag = regOperate.setRegValue(regValue);

@@ -26,7 +26,7 @@ public class RunContent {
     }
 
     public <T> T getBean(Class<T> tClass, String name) {
-        return applicationContext.getBean(tClass, name);
+        return applicationContext.getBean( name,tClass);
     }
 
     public <T>  Map<String, T> getBean(Class<T> tClass) {

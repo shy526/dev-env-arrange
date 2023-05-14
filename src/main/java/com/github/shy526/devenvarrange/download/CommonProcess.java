@@ -1,6 +1,7 @@
 package com.github.shy526.devenvarrange.download;
 
 import com.github.shy526.devenvarrange.config.Config;
+import com.github.shy526.devenvarrange.constant.Constant;
 import com.github.shy526.devenvarrange.help.IoHelp;
 import com.github.shy526.devenvarrange.help.PlaceholderHelper;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
@@ -23,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -33,26 +35,32 @@ import java.util.regex.Pattern;
  */
 @Component
 @Slf4j
-public class CommonProcess implements DownloadProcess {
+public class CommonProcess extends AbsDownloadProcess {
 
     @Autowired
     private Config config;
-    @Autowired
-    private HttpClientService httpClientService;
+
     private static final int VERSION_LENGTH = 4;
 
     private static final int VERSION_INDEX = 0;
     private static final int VERSION_DATE_INDEX = 1;
+
+    @Autowired
+    public CommonProcess(HttpClientService httpClientService) {
+        super(httpClientService);
+    }
 
     /**
      * @param url
      * @return
      */
     @Override
-    public List<ToolVersion> getVersion(ToolRoute toolRoute) {
+    public List<ToolVersion> getVersion(ToolRoute toolRoute, Integer number) {
         List<ToolVersion> toolVersions = new ArrayList<>();
         ToolRoute.Download download = toolRoute.getDownload();
         List<String> rows = html2rows(download.getUrlRoot().get(0), "\n");
+        Properties envProperties = config.getEnvProperties(toolRoute);
+        envProperties.setProperty("urlRoot", download.getUrlRoot().get(0));
         for (String row : rows) {
             String[] col = row.trim().split("\\s+");
             if (col.length != VERSION_LENGTH) {
@@ -60,11 +68,7 @@ public class CommonProcess implements DownloadProcess {
             }
             String version = col[VERSION_INDEX].trim().replace("/", "");
             String dateStr = col[VERSION_DATE_INDEX].trim();
-            String versionPattern = download.getVersionPattern();
-            if (versionPattern == null) {
-                versionPattern = "(\\d+\\.){2}\\d+";
-            }
-            Pattern compile = Pattern.compile(versionPattern);
+            Pattern compile = Pattern.compile(download.getVersionPattern());
             Matcher matcher = compile.matcher(version);
             if (!matcher.matches()) {
                 continue;
@@ -73,59 +77,20 @@ public class CommonProcess implements DownloadProcess {
             if (to == null) {
                 continue;
             }
-
-            toolVersions.add(new ToolVersion(version, to.getDate(), to.getDateStr(), getDownloadUrl(toolRoute, version)));
+            envProperties.setProperty("version", version);
+            toolVersions.add(new ToolVersion(version, to.getDate(), to.getDateStr(), PlaceholderHelper.to(download.getUrl(), envProperties)));
         }
-        toolVersions.sort((ToolVersion t, ToolVersion t1) -> t.getDate().compareTo(t1.getDate()) * -1);
-        return toolVersions;
+        return versionSort(toolVersions, number);
     }
+
 
     @Override
-    public Path downloadFile(ToolRoute toolRoute, String version, String path) {
-        String downloadUrl = getDownloadUrl(toolRoute, version);
-        String fileName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
-        Path filePath = Paths.get(path).resolve(fileName);
-        File file = filePath.toFile();
-        if (file.exists()){
-            return filePath;
-        }
-        try {
-            HttpResult httpResult = httpClientService.get(downloadUrl);
-            String totalMb = String.format("%.2f", httpResult.getResponse().getEntity().getContentLength() / 1024f);
-            CloseableHttpResponse response = httpResult.getResponse();
-            InputStream in = response.getEntity().getContent();
-            BufferedOutputStream out = new BufferedOutputStream(Files.newOutputStream(filePath));
-            System.out.println(downloadUrl + "  ->  " + filePath.toString());
-            String format = totalMb + "kb/" + "%skb";
-            IoHelp.copy(in, out, true, speed -> {
-                String speedMb =String.format("%.2f", speed / 1024f);
-                String str = String.format(format, speedMb);
-                System.out.print(str.replaceAll(".{1}", "\b"));
-                System.out.print(str);
-
-            });
-            System.out.print("\r\n");
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
-        }
-        return filePath;
-    }
-
-
-    private String getDownloadUrl(ToolRoute toolRoute, String version) {
+    public String getDownloadUrl(ToolRoute toolRoute, String version) {
+        Properties envProperties = config.getEnvProperties(toolRoute);
         ToolRoute.Download download = toolRoute.getDownload();
-        String osName = config.getOsName();
-        String osArch = config.getOsArch();
-        Properties properties = new Properties();
-        properties.put("urlRoot", download.getUrlRoot().get(0));
-        properties.put("version", version);
-        String os = osName.toLowerCase().startsWith("win") ? "win" : "linux";
-        String win = String.format("os-%s-format", os);
-        String osFormat = download.getOsFormat().get(win);
-        properties.put("osFormat", osFormat);
-        properties.put("os", os);
-        properties.put("arch", osArch.matches("64") ? "x64" : "x86");
-        return PlaceholderHelper.to(download.getUrl(), properties);
+        envProperties.setProperty("urlRoot", download.getUrlRoot().get(0));
+        envProperties.setProperty("version", version);
+        return PlaceholderHelper.to(download.getUrl(), envProperties);
     }
 
 

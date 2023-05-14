@@ -28,6 +28,7 @@ public class EnvAppend extends AbsEnv {
                 } else {
                     sourceVal += ";" + val;
                 }
+                System.out.println(key+":"+regValue.getValue()+"->"+sourceVal);
                 regValue.setValue(sourceVal);
                 flag = regOperate.setRegValue(regValue);
             }

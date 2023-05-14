@@ -9,12 +9,8 @@
         "urlRoot":[
             "https://dlcdn.apache.org/maven/maven-3"
         ],
-        "process":"common",
-        "url":"${urlRoot}/${version}/binaries/apache-maven-${version}-bin.${osFormat}",
-        "osFormat": {
-            "os-win-format": "zip",
-            "os-linux-format": "tar.gz"
-        }
+        "process":"commonProcess",
+        "url":"${urlRoot}/${version}/binaries/apache-maven-${version}-bin.${os-format}"
     },
     "operate":[
         "xml ${config} > /d:settings/d:localRepository  ${root}/re += ${config} <",

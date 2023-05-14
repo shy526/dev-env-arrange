@@ -1,18 +1,13 @@
 {
   "name": "node",
+  "check": "node -v",
   "download": {
     "urlRoot": [
       "https://nodejs.org/dist"
     ],
-    "process": "common",
-    "url": "${urlRoot}/${version}/node-${version}-${os}-${arch}.${osFormat}",
+    "process": "commonProcess",
+    "url": "${urlRoot}/${version}/node-${version}-${os-name}-${os-arch}.${os-format}",
     "versionPattern": "v(\\d+\\.){2}\\d+",
-    "osFormat": {
-      "os-win-format": "zip",
-      "os-linux-format": "tar.gz"
-    },
-    "operate": [
-      "sysEnv:node_path_shy ${root} ="
-    ]
+    "operate": []
   }
 }

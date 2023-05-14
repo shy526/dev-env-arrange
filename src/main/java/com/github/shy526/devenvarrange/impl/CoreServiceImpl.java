@@ -57,7 +57,7 @@ public class CoreServiceImpl implements CoreService {
     }
 
     @Override
-    public List<ToolVersion> getVersions(String name) {
+    public List<ToolVersion> getVersions(String name,Integer number) {
         List<ToolVersion> result = new ArrayList<>();
         ToolRoute toolRoute = runContent.getToolRoute(name);
         if (toolRoute == null) {
@@ -65,7 +65,7 @@ public class CoreServiceImpl implements CoreService {
         }
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
-        return bean.getVersion(toolRoute);
+        return bean.getVersion(toolRoute,number);
     }
 
     @Override
@@ -75,20 +75,22 @@ public class CoreServiceImpl implements CoreService {
             return false;
         }
         ToolRoute.Download download = toolRoute.getDownload();
-        String check ="cmd /c "+toolRoute.getCheck();
-        ShellClient.exec(check,result->{
+        String check = "cmd /c " + toolRoute.getCheck();
+        int exec = ShellClient.exec(check, result -> {
             String versionPattern = download.getVersionPattern();
             versionPattern = (versionPattern == null) ? "(\\d+\\.){2}\\d+" : versionPattern;
             Pattern compile = Pattern.compile(versionPattern);
             Matcher matcher = compile.matcher(result);
-            String versionMsg="未知版本";
-            if (matcher.find()){
-                versionMsg=matcher.group();
+            String versionMsg = "未知版本";
+            if (matcher.find()) {
+                String group = matcher.group();
+                versionMsg = group;
             }
-            System.out.println("已经安装了:"+versionMsg);
-        },System.out::println);
-        return false;
-/*        ToolRoute.Download download = toolRoute.getDownload();
+            System.out.println("已经安装了:" + versionMsg);
+        });
+        if (exec == ShellClient.CODE_SUCCESS) {
+            return false;
+        }
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
         Path zipPath = bean.downloadFile(toolRoute, version, path);
         System.out.println("unZip:" + zipPath);
@@ -99,18 +101,20 @@ public class CoreServiceImpl implements CoreService {
         System.out.println("root:" + toolRoot);
         Properties properties = new Properties();
         properties.put("root", toolRoot.toString());
-        Map<String, String> variable = toolRoute.getVariable();
-        variable.forEach((key, val) -> {
-            properties.put(key, PlaceholderHelper.to(val, properties));
-        });
+        properties=config.getEnvProperties(toolRoute,properties);
         List<String> operate = toolRoute.getOperate();
-        for (String str : operate) {
-            String rpn = PlaceholderHelper.to(str, properties);
-            List<OperateItem> parse = rpnProcessor.parse(rpn);
-            OperateResult execute = rpnProcessor.execute(parse);
-            System.out.println(rpn+ "    :    " + execute.getSuccess());
-        }*/
-        //return false;
+        if (operate != null) {
+            for (String str : operate) {
+                String rpn = PlaceholderHelper.to(str, properties);
+                System.out.println("rpn = " + rpn);
+                List<OperateItem> parse = rpnProcessor.parse(rpn);
+                OperateResult execute = rpnProcessor.execute(parse);
+                System.out.println("execute = " + execute);
+                System.out.println(rpn + "    :    " + execute.getSuccess());
+            }
+        }
+
+        return false;
     }
 
 

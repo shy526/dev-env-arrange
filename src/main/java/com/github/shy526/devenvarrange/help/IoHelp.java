@@ -61,7 +61,7 @@ public class IoHelp {
         if (!zipPath.toFile().exists()) {
             return null;
         }
-        String root = null;
+        Path root = null;
         boolean flag = true;
         try (ZipFile zipFile = new ZipFile(zipPath.toFile())) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -71,7 +71,7 @@ public class IoHelp {
                 File file = itemPath.toFile();
                 if (item.isDirectory()) {
                     boolean temp = file.exists() || file.mkdirs();
-                    root = flag ? item.getName() : root;
+                    root = flag ? itemPath : root;
                     flag = false;
                     continue;
                 }
@@ -88,8 +88,16 @@ public class IoHelp {
         } catch (Exception ignored) {
         }
         if (root != null) {
-            target = target.resolve(root);
+            while (true){
+                Path parent = root.getParent();
+                if (parent.compareTo(target)==0){
+                    return root;
+                }
+                root=parent;
+            }
+
         }
+
         return target;
     }
 

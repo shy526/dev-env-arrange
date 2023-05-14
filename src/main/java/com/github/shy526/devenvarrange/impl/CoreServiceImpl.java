@@ -75,20 +75,21 @@ public class CoreServiceImpl implements CoreService {
             return false;
         }
         ToolRoute.Download download = toolRoute.getDownload();
+        StringBuilder sb = new StringBuilder();
         String check = "cmd /c " + toolRoute.getCheck();
+        String msg="已安装->未知版本";
         int exec = ShellClient.exec(check, result -> {
             String versionPattern = download.getVersionPattern();
-            versionPattern = (versionPattern == null) ? "(\\d+\\.){2}\\d+" : versionPattern;
             Pattern compile = Pattern.compile(versionPattern);
             Matcher matcher = compile.matcher(result);
-            String versionMsg = "未知版本";
             if (matcher.find()) {
-                String group = matcher.group();
-                versionMsg = group;
+                sb.append("已安装->"+matcher.group());
+            }else {
+                sb.append(msg);
             }
-            System.out.println("已经安装了:" + versionMsg);
         });
         if (exec == ShellClient.CODE_SUCCESS) {
+            System.out.println(sb.length()==0?msg:sb);
             return false;
         }
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());

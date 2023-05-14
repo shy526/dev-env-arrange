@@ -1,6 +1,6 @@
 {
   "name": "scala3",
-  "check": "cmd /c scala -version",
+  "check": "scala -version",
   "variable":{
     "owner":"lampepfl",
     "repo":"dotty"

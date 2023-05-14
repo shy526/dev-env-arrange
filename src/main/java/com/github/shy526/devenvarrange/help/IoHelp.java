@@ -75,13 +75,14 @@ public class IoHelp {
                     flag = false;
                     continue;
                 }
-
                 File parentFile = file.getParentFile();
                 boolean temp = parentFile.exists() || parentFile.mkdirs();
-                try (InputStream in = new BufferedInputStream(zipFile.getInputStream(item)); OutputStream out = new BufferedOutputStream(Files.newOutputStream(itemPath));
-                ) {
-                    IoHelp.copy(in, out, false,null);
-                } catch (Exception ignored) {
+                if (!file.exists()){
+                    try (InputStream in = new BufferedInputStream(zipFile.getInputStream(item)); OutputStream out = new BufferedOutputStream(Files.newOutputStream(itemPath));
+                    ) {
+                        IoHelp.copy(in, out, false,null);
+                    } catch (Exception ignored) {
+                    }
                 }
                 flag = false;
             }

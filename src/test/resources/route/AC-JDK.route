@@ -1,0 +1,17 @@
+{
+  "name":"AC-JDK1",
+  "variable":{
+    "os-win": "windows"
+  },
+  "check":"java -version",
+  "download":{
+    "versions": [8,11,17,20],
+    "urlRoot":[
+      "https://corretto.aws"
+    ],
+    "process":"commonProcess",
+    "url":"${urlRoot}/downloads/latest/amazon-corretto-${version}-${os-arch}-${os-name}-jdk.{os-format}"
+  },
+  "operate":[
+      ]
+  }

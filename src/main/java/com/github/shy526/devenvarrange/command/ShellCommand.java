@@ -55,8 +55,9 @@ public class ShellCommand extends AbstractShellComponent {
     private Table buildTable(List<?> data, LinkedHashMap<String, Object> head) {
         TableModel model = new BeanListTableModel<>(data, head);
         TableBuilder tableBuilder = new TableBuilder(model);
-        tableBuilder.addFullBorder(BorderStyle.fancy_double);
-        tableBuilder.on(CellMatchers.table()).addAligner(SimpleHorizontalAligner.center);
+        tableBuilder.addFullBorder(BorderStyle.fancy_light_double_dash);
+        TableBuilder.CellMatcherStub cellMatcherStub = tableBuilder.on(CellMatchers.table());
+        cellMatcherStub.addAligner(SimpleHorizontalAligner.center);
         return tableBuilder.build();
     }
 

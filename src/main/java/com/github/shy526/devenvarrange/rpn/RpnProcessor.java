@@ -69,7 +69,7 @@ public class RpnProcessor {
             }
         }
         SYMBOL_MAP.forEach((k,v)->{
-            log.error("逆波兰符号体系加载-->"+k+"-->"+v.getSimpleName());
+            log.error(k+"-->"+v.getSimpleName());
         });
 
     }

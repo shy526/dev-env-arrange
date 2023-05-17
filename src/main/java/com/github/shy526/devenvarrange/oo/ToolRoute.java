@@ -24,10 +24,17 @@ public class ToolRoute {
 
     @Data
     public static class Download {
-        private List<String> versions;
+        private List<versionMap> versions;
         private List<String> urlRoot;
         private String process;
         private String url;
         private String versionPattern = Constant.DEFAULT_VERSION_PATTERN_STR;
+    }
+
+    @Data
+    public static class versionMap {
+        private String version;
+        private String url;
+
     }
 }

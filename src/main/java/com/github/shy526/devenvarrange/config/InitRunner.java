@@ -24,8 +24,5 @@ public class InitRunner implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
         List<ToolRoute> toolRoutes = coreService.getToolRoutes();
-        for (ToolRoute toolRoute : toolRoutes) {
-            log.error(toolRoute.getName()+"-> yes");
-        }
     }
 }

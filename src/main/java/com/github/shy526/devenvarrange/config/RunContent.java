@@ -2,12 +2,18 @@ package com.github.shy526.devenvarrange.config;
 
 
 import com.github.shy526.devenvarrange.oo.ToolRoute;
+import com.github.shy526.gather.GatherUtils;
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author shy526
@@ -32,6 +38,11 @@ public class RunContent {
 
     public <T>  Map<String, T> getBean(Class<T> tClass) {
         return applicationContext.getBeansOfType(tClass);
+
+    }
+
+    public List<ToolRoute> getToolRoute() {
+        return new ArrayList<>(TOOL_ROUTE_MAP.values());
 
     }
 }

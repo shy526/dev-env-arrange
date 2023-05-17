@@ -9,8 +9,10 @@ import com.github.shy526.devenvarrange.oo.ToolVersion;
 import com.github.shy526.gather.GatherUtils;
 import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,6 +35,7 @@ import java.util.regex.Pattern;
 
 /**
  * 通用下载处理器
+ *
  * @author shy526
  */
 @Component
@@ -63,13 +66,18 @@ public class CommonProcess extends AbsDownloadProcess {
         List<String> rows = html2rows(download.getUrlRoot().get(0), "\n");
         Properties envProperties = config.getEnvProperties(toolRoute);
         envProperties.setProperty("urlRoot", download.getUrlRoot().get(0));
-        List<String> versions = download.getVersions();
-        if (!GatherUtils.isEmpty(versions)){
-            for (String version : versions) {
+        List<ToolRoute.versionMap> versions = download.getVersions();
+        if (!GatherUtils.isEmpty(versions)) {
+            for (ToolRoute.versionMap versionMap : versions) {
+                String version = versionMap.getVersion();
                 envProperties.setProperty("version", version);
-                toolVersions.add(new ToolVersion(version, PlaceholderHelper.to(download.getUrl(), envProperties)));
+                String url = versionMap.getUrl();
+                if (StringUtils.isEmpty(url)) {
+                    url = download.getUrl();
+                }
+                toolVersions.add(new ToolVersion(version, PlaceholderHelper.to(url, envProperties)));
             }
-        }else {
+        } else {
             for (String row : rows) {
                 String[] col = row.trim().split("\\s+");
                 if (col.length != VERSION_LENGTH) {

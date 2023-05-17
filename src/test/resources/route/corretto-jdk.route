@@ -5,7 +5,20 @@
   },
   "check":"java -version",
   "download":{
-    "versions": ["8","11","17","20"],
+    "versions": [
+      {
+        "version": 8
+      },
+      {
+        "version": 11
+      },
+      {
+        "version": 17
+      },
+      {
+        "version": 20
+      }
+    ],
     "urlRoot":[
       "https://corretto.aws"
     ],

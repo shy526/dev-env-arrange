@@ -2,6 +2,7 @@ package com.github.shy526.devenvarrange.impl;
 
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.shy526.devenvarrange.command.ShellCommand;
 import com.github.shy526.devenvarrange.config.Config;
 import com.github.shy526.devenvarrange.config.RunContent;
@@ -14,7 +15,9 @@ import com.github.shy526.devenvarrange.oo.ToolVersion;
 import com.github.shy526.devenvarrange.rpn.RpnProcessor;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
+import com.github.shy526.gather.GatherUtils;
 import com.github.shy526.http.HttpClientService;
+import com.github.shy526.http.HttpResult;
 import com.github.shy526.regedit.shell.ShellClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +58,29 @@ public class CoreServiceImpl implements CoreService {
 
     @Override
     public List<ToolRoute> getToolRoutes() {
-        List<Path> toolRoutePaths = getToolRoutePaths();
-        return buildToolRoutes(toolRoutePaths);
+        List<ToolRoute> toolRoutes = runContent.getToolRoute();
+        if (!GatherUtils.isEmpty(toolRoutes)) {
+            return toolRoutes;
+        }
+        String route = config.getRoute();
+
+        Pattern compile = Pattern.compile("https?://.+");
+        Matcher matcher = compile.matcher(route);
+
+        if (matcher.matches()) {
+            toolRoutes = remoteToolRoute(route);
+        } else {
+            toolRoutes = localToolRoute(route);
+        }
+        for (ToolRoute toolRoute : toolRoutes) {
+            log.error("tool->" + toolRoute.getName());
+            runContent.putToolRoute(toolRoute);
+        }
+        return toolRoutes;
     }
 
     @Override
-    public List<ToolVersion> getVersions(String name,Integer number) {
+    public List<ToolVersion> getVersions(String name, Integer number) {
         List<ToolVersion> result = new ArrayList<>();
         ToolRoute toolRoute = runContent.getToolRoute(name);
         if (toolRoute == null) {
@@ -68,7 +88,7 @@ public class CoreServiceImpl implements CoreService {
         }
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
-        return bean.getVersion(toolRoute,number);
+        return bean.getVersion(toolRoute, number);
     }
 
     @Override
@@ -80,19 +100,19 @@ public class CoreServiceImpl implements CoreService {
         ToolRoute.Download download = toolRoute.getDownload();
         StringBuilder sb = new StringBuilder();
         String check = "cmd /c " + toolRoute.getCheck();
-        String msg="已安装->未知版本";
+        String msg = "已安装->未知版本";
         int exec = ShellClient.exec(check, result -> {
             String versionPattern = download.getVersionPattern();
             Pattern compile = Pattern.compile(versionPattern);
             Matcher matcher = compile.matcher(result);
             if (matcher.find()) {
-                sb.append("已安装->"+matcher.group());
-            }else {
+                sb.append("已安装->").append(matcher.group());
+            } else {
                 sb.append(msg);
             }
         });
         if (exec == ShellClient.CODE_SUCCESS) {
-            System.out.println(sb.length()==0?msg:sb);
+            System.out.println(sb.length() == 0 ? msg : sb);
             return false;
         }
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
@@ -105,7 +125,7 @@ public class CoreServiceImpl implements CoreService {
         System.out.println("root:" + toolRoot);
         Properties properties = new Properties();
         properties.put("root", toolRoot.toString());
-        properties=config.getEnvProperties(toolRoute,properties);
+        properties = config.getEnvProperties(toolRoute, properties);
         List<String> operate = toolRoute.getOperate();
         if (operate != null) {
             for (String str : operate) {
@@ -121,11 +141,27 @@ public class CoreServiceImpl implements CoreService {
         return false;
     }
 
-
-    private List<ToolRoute> buildToolRoutes(List<Path> toolRoutePaths) {
-        List<ToolRoute> toolRoutes = new ArrayList<>(toolRoutePaths.size());
-        for (Path toolRoutePath : toolRoutePaths) {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(toolRoutePath)))) {
+    /**
+     * 获取本地route
+     *
+     * @param path 路径
+     * @return ToolRoute
+     */
+    private List<ToolRoute> localToolRoute(String path) {
+        List<ToolRoute> result = new ArrayList<>();
+        File routeDir = new File(path);
+        if (!routeDir.exists()) {
+            return result;
+        }
+        if (routeDir.isFile()) {
+            return result;
+        }
+        File[] files = routeDir.listFiles();
+        if (files == null) {
+            return result;
+        }
+        for (File file : files) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())))) {
                 StringBuilder sb = new StringBuilder();
                 String line = null;
                 while ((line = br.readLine()) != null) {
@@ -133,30 +169,44 @@ public class CoreServiceImpl implements CoreService {
                 }
                 if (sb.length() > 0) {
                     ToolRoute toolRoute = JSON.parseObject(sb.toString(), ToolRoute.class);
-                    runContent.putToolRoute(toolRoute);
-                    toolRoutes.add(toolRoute);
+                    result.add(toolRoute);
                 }
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
         }
-        return toolRoutes;
+        return result;
     }
 
-    private List<Path> getToolRoutePaths() {
-        List<Path> toolRoutePath = new ArrayList<>();
-        String route = config.getRoute();
-        File routeDir = new File(route);
-        if (!routeDir.exists()) {
-            return toolRoutePath;
+    /**
+     * 获取远程route
+     *
+     * @param url url
+     * @return ToolRoute
+     */
+    private List<ToolRoute> remoteToolRoute(String url) {
+        List<ToolRoute> result = new ArrayList<>();
+        String routesStr = httpEntityStr(url);
+        List<JSONObject> routes = JSONObject.parseArray(routesStr, JSONObject.class);
+        for (JSONObject route : routes) {
+            String downloadUrl = route.getString("download_url");
+            String type = route.getString("type");
+            String name = route.getString("name");
+            if (!"file".equals(type) || !".route".equals(name.substring(name.lastIndexOf(".")))) {
+                continue;
+            }
+            result.add(JSONObject.parseObject(httpEntityStr(downloadUrl), ToolRoute.class));
         }
-        if (routeDir.isFile()) {
-            return toolRoutePath;
+        return result;
+    }
+
+    private String httpEntityStr(String url) {
+        String result = "";
+        try (HttpResult httpResult = httpClientService.get(url)) {
+            result = httpResult.getEntityStr();
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
         }
-        File[] files = routeDir.listFiles();
-        if (files == null) {
-            return toolRoutePath;
-        }
-        return Arrays.stream(files).map(File::toPath).collect(Collectors.toList());
+        return result;
     }
 }

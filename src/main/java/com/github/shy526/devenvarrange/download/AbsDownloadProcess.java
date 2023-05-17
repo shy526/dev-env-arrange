@@ -9,7 +9,6 @@ import com.github.shy526.http.HttpResult;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.springframework.stereotype.Component;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -37,8 +36,8 @@ public abstract class AbsDownloadProcess implements DownloadProcess {
 
     static {
         VERSION_COMPARATOR = (o1, o2) -> {
-            List<String> versions1 = getVersions(o1);
-            List<String> versions2 = getVersions(o2);
+            List<String> versions1 = parseVersions(o1);
+            List<String> versions2 = parseVersions(o2);
             int temp = 0;
             for (int i = 0; i < versions1.size(); i++) {
 
@@ -55,7 +54,7 @@ public abstract class AbsDownloadProcess implements DownloadProcess {
         };
     }
 
-    protected static List<String> getVersions(ToolVersion o1) {
+    protected static List<String> parseVersions(ToolVersion o1) {
         Matcher matcher1 = Constant.DEFAULT_VERSION_PATTERN.matcher(o1.getVersion());
         if (matcher1.find()) {
             return Lists.newArrayList(matcher1.group().split("\\."));

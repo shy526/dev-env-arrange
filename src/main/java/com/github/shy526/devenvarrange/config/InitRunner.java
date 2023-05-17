@@ -1,12 +1,15 @@
 package com.github.shy526.devenvarrange.config;
 
 import com.github.shy526.devenvarrange.impl.CoreService;
+import com.github.shy526.devenvarrange.oo.ToolRoute;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author shy526
@@ -20,6 +23,9 @@ public class InitRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        coreService.getToolRoutes();
+        List<ToolRoute> toolRoutes = coreService.getToolRoutes();
+        for (ToolRoute toolRoute : toolRoutes) {
+            log.error(toolRoute.getName()+"-> yes");
+        }
     }
 }

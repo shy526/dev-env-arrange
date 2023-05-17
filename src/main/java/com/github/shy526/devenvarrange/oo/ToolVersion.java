@@ -14,6 +14,11 @@ public class ToolVersion {
     private String dateStr;
     private String url;
 
+    public ToolVersion(String version, String url) {
+        this.version = version;
+        this.url = url;
+    }
+
     public ToolVersion(String version, Date date, String dateStr, String url) {
         this.version = version;
         this.date = date;

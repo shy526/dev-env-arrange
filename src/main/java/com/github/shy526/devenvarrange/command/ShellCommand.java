@@ -56,12 +56,12 @@ public class ShellCommand extends AbstractShellComponent {
         TableModel model = new BeanListTableModel<>(data, head);
         TableBuilder tableBuilder = new TableBuilder(model);
         tableBuilder.addFullBorder(BorderStyle.fancy_double);
+        tableBuilder.on(CellMatchers.table()).addAligner(SimpleHorizontalAligner.center);
         return tableBuilder.build();
     }
 
     @ShellMethod(value = "配置工具", key = {"install", "i"})
     public boolean installTool(String name ,String version){
-        coreService.insert(name,version,config.getEnv());
-        return false;
+        return coreService.insert(name,version,config.getEnv());
     }
 }

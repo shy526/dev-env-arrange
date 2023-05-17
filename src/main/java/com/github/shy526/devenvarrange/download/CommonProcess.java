@@ -6,6 +6,7 @@ import com.github.shy526.devenvarrange.help.IoHelp;
 import com.github.shy526.devenvarrange.help.PlaceholderHelper;
 import com.github.shy526.devenvarrange.oo.ToolRoute;
 import com.github.shy526.devenvarrange.oo.ToolVersion;
+import com.github.shy526.gather.GatherUtils;
 import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import com.google.common.collect.Lists;
@@ -62,24 +63,32 @@ public class CommonProcess extends AbsDownloadProcess {
         List<String> rows = html2rows(download.getUrlRoot().get(0), "\n");
         Properties envProperties = config.getEnvProperties(toolRoute);
         envProperties.setProperty("urlRoot", download.getUrlRoot().get(0));
-        for (String row : rows) {
-            String[] col = row.trim().split("\\s+");
-            if (col.length != VERSION_LENGTH) {
-                continue;
+        List<String> versions = download.getVersions();
+        if (!GatherUtils.isEmpty(versions)){
+            for (String version : versions) {
+                envProperties.setProperty("version", version);
+                toolVersions.add(new ToolVersion(version, PlaceholderHelper.to(download.getUrl(), envProperties)));
             }
-            String version = col[VERSION_INDEX].trim().replace("/", "");
-            String dateStr = col[VERSION_DATE_INDEX].trim();
-            Pattern compile = Pattern.compile(download.getVersionPattern());
-            Matcher matcher = compile.matcher(version);
-            if (!matcher.matches()) {
-                continue;
+        }else {
+            for (String row : rows) {
+                String[] col = row.trim().split("\\s+");
+                if (col.length != VERSION_LENGTH) {
+                    continue;
+                }
+                String version = col[VERSION_INDEX].trim().replace("/", "");
+                String dateStr = col[VERSION_DATE_INDEX].trim();
+                Pattern compile = Pattern.compile(download.getVersionPattern());
+                Matcher matcher = compile.matcher(version);
+                if (!matcher.matches()) {
+                    continue;
+                }
+                DateConverter.ConverterResult to = DateConverter.to(dateStr);
+                if (to == null) {
+                    continue;
+                }
+                envProperties.setProperty("version", version);
+                toolVersions.add(new ToolVersion(version, to.getDate(), to.getDateStr(), PlaceholderHelper.to(download.getUrl(), envProperties)));
             }
-            DateConverter.ConverterResult to = DateConverter.to(dateStr);
-            if (to == null) {
-                continue;
-            }
-            envProperties.setProperty("version", version);
-            toolVersions.add(new ToolVersion(version, to.getDate(), to.getDateStr(), PlaceholderHelper.to(download.getUrl(), envProperties)));
         }
         return versionSort(toolVersions, number);
     }

@@ -1,5 +1,6 @@
 package com.github.shy526.devenvarrange.config;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.shy526.devenvarrange.help.IoHelp;
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.Key;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 @Component
 public class LocalFileCache {
@@ -40,7 +46,22 @@ public class LocalFileCache {
         }
     }
 
+    public void deleteAll() {
+        Path cachePath = getCachePath();
+        File[] files = cachePath.toFile().listFiles(File::isFile);
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
+            file.delete();
+        }
+    }
 
+
+    public boolean exists(String key) {
+        Path resolve = getCachePath().resolve(key);
+        return resolve.toFile().exists();
+    }
     public String get(String key, long time) {
         Path cachePath = getCachePath();
         Path resolve = cachePath.resolve(key);
@@ -62,6 +83,19 @@ public class LocalFileCache {
         return IoHelp.readStr(resolve);
     }
 
+
+    public<T> List<T> process(String key, long time,Class<T> tClass, Supplier<List<T>> supplier){
+        String str = get(key,time);
+        List<T> result=new ArrayList<>();
+        if (str==null){
+            result = supplier.get();
+            set(key, JSON.toJSONString(result,true));
+        }else {
+            result = JSON.parseArray(str, tClass);
+        }
+
+        return result;
+    }
 
     public <T> T get(String key, long time, Class<T> tClass) {
         String str = get(key, time);

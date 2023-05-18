@@ -69,13 +69,8 @@ public class CoreServiceImpl implements CoreService {
 
         if (matcher.matches()) {
             String key = "list-ToolRoute";
-            String str = localFileCache.get(key, 1000 * 60 * 5);
-            if (StringUtils.isEmpty(str)) {
-                toolRoutes = remoteToolRoute(route);
-                localFileCache.set(key, JSON.toJSONString(toolRoutes, true));
-            } else {
-                toolRoutes = JSON.parseArray(str, ToolRoute.class);
-            }
+            long time = 1000 * 60 * 5;
+            toolRoutes = localFileCache.process(key, time, ToolRoute.class, () -> remoteToolRoute(route));
         } else {
             toolRoutes = localToolRoute(route);
         }
@@ -98,15 +93,9 @@ public class CoreServiceImpl implements CoreService {
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
         String format = "%s_%s_versions";
         String key = String.format(format, name, number);
-        String str = localFileCache.get(key, 1000 * 60 * 5);
+        long time = 1000 * 60 * 5;
         List<ToolVersion> versions = new ArrayList<>();
-        if (StringUtils.isEmpty(str)) {
-            versions = bean.getVersion(toolRoute, number);
-            localFileCache.set(key, JSON.toJSONString(versions, true));
-        } else {
-            versions = JSON.parseArray(str, ToolVersion.class);
-        }
-
+        versions = localFileCache.process(key, time, ToolVersion.class, () -> bean.getVersion(toolRoute, number));
         return versions;
     }
 

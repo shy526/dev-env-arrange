@@ -19,6 +19,7 @@ import com.github.shy526.gather.GatherUtils;
 import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import com.github.shy526.regedit.shell.ShellClient;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,9 +76,15 @@ public class CoreServiceImpl implements CoreService {
         } else {
             toolRoutes = localToolRoute(route);
         }
-
+        String format = "https://github.com/%s/%s/releases";
         for (ToolRoute toolRoute : toolRoutes) {
             log.error("tool->" + toolRoute.getName());
+            String process = toolRoute.getDownload().getProcess();
+            if (process.equals("githubProcess")) {
+                Map<String, String> variable = toolRoute.getVariable();
+                toolRoute.getDownload().setUrlRoot(Lists.newArrayList(String.format(format, variable.get("owner"), variable.get("repo"))));
+            }
+
             runContent.putToolRoute(toolRoute);
         }
         return toolRoutes;

@@ -22,6 +22,10 @@ public class Config {
      */
     private String route;
     private String env;
+
+    private String routeCache;
+
+    private final String temp = System.getProperty("temp");
     private final String osName = System.getProperty("os.name").toLowerCase();
     private final String userHome = System.getProperty("user.home");
     private final String userName = System.getProperty("user.name");

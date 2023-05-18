@@ -108,7 +108,6 @@ public class RpnProcessor {
                 params.push(runTimeStack.pop());
             }
             result = symbol.execute(params);
-            System.out.println(JSONObject.toJSON(result));
             Boolean success = result.getSuccess();
             if (!success) {
                 break;

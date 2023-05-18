@@ -10,8 +10,9 @@ httpClientService:
     idleTime: 5000
     delay: 5000
 config:
-  route: "https://api.github.com/repos/shy526/dev-env-arrange-repo/contents/route"
+  route: "https://api.github.com/repos/shy526/dev-env-arrange-repo/contents/route/cache"
   env: "D:/codeup/dev-env-arrange/src/test/resources"
+  routeCache: "D:/codeup/dev-env-arrange/src/test/resources"
 spring:
   shell:
     command:

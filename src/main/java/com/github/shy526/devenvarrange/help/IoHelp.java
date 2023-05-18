@@ -10,6 +10,7 @@ import java.util.zip.ZipFile;
 
 /**
  * io处理工具
+ *
  * @author shy526
  */
 public class IoHelp {
@@ -20,8 +21,8 @@ public class IoHelp {
         try {
             while ((len = in.read(bytes)) != -1) {
                 out.write(bytes, 0, len);
-                speed+=len;
-                if (consumer!=null){
+                speed += len;
+                if (consumer != null) {
                     consumer.accept(speed);
                 }
             }
@@ -78,10 +79,10 @@ public class IoHelp {
                 }
                 File parentFile = file.getParentFile();
                 boolean temp = parentFile.exists() || parentFile.mkdirs();
-                if (!file.exists()){
+                if (!file.exists()) {
                     try (InputStream in = new BufferedInputStream(zipFile.getInputStream(item)); OutputStream out = new BufferedOutputStream(Files.newOutputStream(itemPath));
                     ) {
-                        IoHelp.copy(in, out, false,null);
+                        IoHelp.copy(in, out, false, null);
                     } catch (Exception ignored) {
                     }
                 }
@@ -90,17 +91,29 @@ public class IoHelp {
         } catch (Exception ignored) {
         }
         if (root != null) {
-            while (true){
+            while (true) {
                 Path parent = root.getParent();
-                if (parent.compareTo(target)==0){
+                if (parent.compareTo(target) == 0) {
                     return root;
                 }
-                root=parent;
+                root = parent;
             }
 
         }
 
         return target;
+    }
+
+    public static String readStr(Path path) {
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(path)))) {
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (Exception ignored) {
+        }
+        return sb.toString();
     }
 
     public static <T> T close(Closeable closeable, Class<T> tClass) {

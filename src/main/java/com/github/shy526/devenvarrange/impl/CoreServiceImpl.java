@@ -3,8 +3,8 @@ package com.github.shy526.devenvarrange.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.github.shy526.devenvarrange.command.ShellCommand;
 import com.github.shy526.devenvarrange.config.Config;
+import com.github.shy526.devenvarrange.config.LocalFileCache;
 import com.github.shy526.devenvarrange.config.RunContent;
 import com.github.shy526.devenvarrange.download.CommonProcess;
 import com.github.shy526.devenvarrange.download.DownloadProcess;
@@ -19,20 +19,21 @@ import com.github.shy526.gather.GatherUtils;
 import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import com.github.shy526.regedit.shell.ShellClient;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * @author shy526
@@ -52,7 +53,8 @@ public class CoreServiceImpl implements CoreService {
     @Autowired
     private CommonProcess commonProcess;
 
-
+    @Autowired
+    private LocalFileCache localFileCache;
     @Autowired
     private RpnProcessor rpnProcessor;
 
@@ -68,10 +70,18 @@ public class CoreServiceImpl implements CoreService {
         Matcher matcher = compile.matcher(route);
 
         if (matcher.matches()) {
-            toolRoutes = remoteToolRoute(route);
+            String key = "list-ToolRoute";
+            String str = localFileCache.get(key, 1000 * 60 * 5);
+            if (StringUtils.isEmpty(str)) {
+                toolRoutes = remoteToolRoute(route);
+                localFileCache.set(key, JSON.toJSONString(toolRoutes, true));
+            } else {
+                toolRoutes = JSON.parseArray(str, ToolRoute.class);
+            }
         } else {
             toolRoutes = localToolRoute(route);
         }
+
         for (ToolRoute toolRoute : toolRoutes) {
             log.error("tool->" + toolRoute.getName());
             runContent.putToolRoute(toolRoute);
@@ -127,18 +137,17 @@ public class CoreServiceImpl implements CoreService {
         properties.put("root", toolRoot.toString());
         properties = config.getEnvProperties(toolRoute, properties);
         List<String> operate = toolRoute.getOperate();
+        boolean result = true;
         if (operate != null) {
             for (String str : operate) {
                 String rpn = PlaceholderHelper.to(str, properties);
-                System.out.println("rpn = " + rpn);
+                log.error(rpn);
                 List<OperateItem> parse = rpnProcessor.parse(rpn);
                 OperateResult execute = rpnProcessor.execute(parse);
-                System.out.println("execute = " + execute);
-                System.out.println(rpn + "    :    " + execute.getSuccess());
+                result = execute.getSuccess();
             }
         }
-
-        return false;
+        return result;
     }
 
     /**
@@ -161,19 +170,11 @@ public class CoreServiceImpl implements CoreService {
             return result;
         }
         for (File file : files) {
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(file.toPath())))) {
-                StringBuilder sb = new StringBuilder();
-                String line = null;
-                while ((line = br.readLine()) != null) {
-                    sb.append(line);
-                }
-                if (sb.length() > 0) {
-                    ToolRoute toolRoute = JSON.parseObject(sb.toString(), ToolRoute.class);
-                    result.add(toolRoute);
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
+            String str = IoHelp.readStr(file.toPath());
+            if (StringUtils.isEmpty(str)) {
+                continue;
             }
+            result.add(JSON.parseObject(str, ToolRoute.class));
         }
         return result;
     }

@@ -19,14 +19,12 @@ import com.github.shy526.gather.GatherUtils;
 import com.github.shy526.http.HttpClientService;
 import com.github.shy526.http.HttpResult;
 import com.github.shy526.regedit.shell.ShellClient;
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -98,7 +96,18 @@ public class CoreServiceImpl implements CoreService {
         }
         ToolRoute.Download download = toolRoute.getDownload();
         DownloadProcess bean = runContent.getBean(DownloadProcess.class, download.getProcess());
-        return bean.getVersion(toolRoute, number);
+        String format = "%s_%s_versions";
+        String key = String.format(format, name, number);
+        String str = localFileCache.get(key, 1000 * 60 * 5);
+        List<ToolVersion> versions = new ArrayList<>();
+        if (StringUtils.isEmpty(str)) {
+            versions = bean.getVersion(toolRoute, number);
+            localFileCache.set(key, JSON.toJSONString(versions, true));
+        } else {
+            versions = JSON.parseArray(str, ToolVersion.class);
+        }
+
+        return versions;
     }
 
     @Override

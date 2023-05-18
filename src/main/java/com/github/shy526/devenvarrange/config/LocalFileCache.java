@@ -17,13 +17,14 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class LocalFileCache {
     @Autowired
     private Config config;
+
     private Path getCachePath() {
         String cachePathStr = config.getRouteCache();
         Path path = null;
         if (StringUtils.isEmpty(cachePathStr)) {
-            path = Paths.get(cachePathStr);
-        } else {
             path = Paths.get(config.getEnv()).resolve("dev-env-arrange-cache");
+        } else {
+            path = Paths.get(cachePathStr);
         }
         File file = path.toFile();
         boolean temp = file.exists() && file.mkdirs();
@@ -34,7 +35,7 @@ public class LocalFileCache {
         try {
             Path cachePath = getCachePath();
             Path resolve = cachePath.resolve(key);
-            IoHelp.copy(new ByteArrayInputStream(val.getBytes()),  Files.newOutputStream(resolve), true, null);
+            IoHelp.copy(new ByteArrayInputStream(val.getBytes()), Files.newOutputStream(resolve), true, null);
         } catch (Exception ignored) {
         }
     }

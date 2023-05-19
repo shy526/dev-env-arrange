@@ -63,6 +63,7 @@ public class Config {
         String arch = osArch.matches("64") ? "x64" : "x86";
         String archKey = String.format("os-arch-%s", arch);
         result.put("os-arch", result.getProperty(archKey));
+        result.put("user-home",userHome);
         return result;
     }
 }

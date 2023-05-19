@@ -1,5 +1,6 @@
-package com.github.shy526.devenvarrange.rpn.files;
+package com.github.shy526.devenvarrange.rpn.file;
 
+import com.github.shy526.devenvarrange.help.IoHelp;
 import com.github.shy526.devenvarrange.rpn.oo.OperateItem;
 import com.github.shy526.devenvarrange.rpn.oo.OperateResult;
 import org.springframework.stereotype.Component;
@@ -8,21 +9,22 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 
+/**
+ * @author sy526
+ */
 @Component
-public class FileDelete implements FileSymbol {
+public class FileCopy implements FileSymbol {
     @Override
     public OperateResult execute(List<OperateItem> operateItems) {
         Path source = getVal(operateItems, 0);
-        File file = source.toFile();
-        boolean temp = true;
-        if (file.exists()) {
-            temp = file.delete();
-        }
-        return OperateResult.of(operateItems, temp);
+        Path target = getVal(operateItems, 1);
+        IoHelp.copy(source, target);
+        File file = target.toFile();
+        return OperateResult.of(operateItems, file.exists(),target.toString());
     }
 
     @Override
     public String getSymbolStr() {
-        return "-";
+        return ">>";
     }
 }

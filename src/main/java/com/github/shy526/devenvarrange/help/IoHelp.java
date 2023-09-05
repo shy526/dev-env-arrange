@@ -15,7 +15,7 @@ import java.util.zip.ZipFile;
  */
 public class IoHelp {
     public static void copy(InputStream in, OutputStream out, boolean flag, Consumer<Long> consumer) {
-        byte[] bytes = new byte[1024 * 1024];
+        byte[] bytes = new byte[1024 * 20];
         int len = -1;
         long speed = 0;
         try {

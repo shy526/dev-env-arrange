@@ -21,11 +21,13 @@ import com.github.shy526.http.HttpResult;
 import com.github.shy526.regedit.shell.ShellClient;
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -201,14 +203,23 @@ public class CoreServiceImpl implements CoreService {
         String routesStr = httpEntityStr(url);
         List<JSONObject> routes = JSONObject.parseArray(routesStr, JSONObject.class);
         for (JSONObject route : routes) {
-            String downloadUrl = route.getString("download_url");
+            String downloadUrl = route.getString("url");
             String type = route.getString("type");
             String name = route.getString("name");
             if (!"file".equals(type) || !".route".equals(name.substring(name.lastIndexOf(".")))) {
                 continue;
             }
             String temp = httpEntityStr(downloadUrl);
+            if(StringUtils.isEmpty(temp)){
+                continue;
+            }
+            JSONObject tempObj = JSON.parseObject(temp);
+            String content = tempObj.getString("content");
+            if(StringUtils.isEmpty(content)){
+                continue;
+            }
             try {
+                temp = new String(Base64.decodeBase64(content), StandardCharsets.UTF_8);
                 result.add(JSONObject.parseObject(temp, ToolRoute.class));
             }catch (Exception ig){
                 log.error(temp);

@@ -156,6 +156,11 @@ public class CoreServiceImpl implements CoreService {
         return result;
     }
 
+    @Override
+    public boolean switchTool(String name, String version, String path) {
+        return false;
+    }
+
     /**
      * 获取本地route
      *
@@ -202,7 +207,12 @@ public class CoreServiceImpl implements CoreService {
             if (!"file".equals(type) || !".route".equals(name.substring(name.lastIndexOf(".")))) {
                 continue;
             }
-            result.add(JSONObject.parseObject(httpEntityStr(downloadUrl), ToolRoute.class));
+            String temp = httpEntityStr(downloadUrl);
+            try {
+                result.add(JSONObject.parseObject(temp, ToolRoute.class));
+            }catch (Exception ig){
+                log.error(temp);
+            }
         }
         return result;
     }

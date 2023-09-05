@@ -19,7 +19,7 @@ public class DateConverter {
         String[] split = dateStr.split("-");
         if (split[1].length() == 3 && split[2].length() == 4) {
             try {
-                Date date = new SimpleDateFormat("dd-MMM-yyyy", Locale.US).parse(dateStr);
+                Date date = new SimpleDateFormat(US_DATE_FORMAT, Locale.US).parse(dateStr);
                 return new ConverterResult(DateFormat.dateFormat(date), date);
             } catch (ParseException e) {
                 log.error(e.getMessage(), e);

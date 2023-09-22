@@ -22,6 +22,8 @@ class CoreServiceTest {
 
     @Test
     void getVersions() {
+        coreService.getToolRoutes();
+        coreService.insert("scala3","3.3.0",null);
     }
 
     @Test

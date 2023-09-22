@@ -128,7 +128,7 @@ public class CoreServiceImpl implements CoreService {
             } else {
                 sb.append(msg);
             }
-        });
+        },true);
         if (exec == ShellClient.CODE_SUCCESS) {
             System.out.println(sb.length() == 0 ? msg : sb);
             return false;

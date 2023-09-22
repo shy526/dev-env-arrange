@@ -1,18 +1,19 @@
 {
-  "name": "scala3",
-  "check": "scala -version",
-  "variable":{
-    "owner":"lampepfl",
-    "repo":"dotty"
-  },
+  "check": "scala -version 2>&1",
   "download": {
+    "process": "githubProcess",
+    "url": "${urlRoot}/${version}/scala3-${version}.${os-format}",
     "urlRoot": [
       "/"
     ],
-    "process": "githubProcess",
-    "url": "${urlRoot}/${version}/scala3-${version}.${os-format}"
+    "versionPattern": "(\\d+\\.){2}\\d+(-RC\\d+|)"
   },
+  "name": "scala3",
   "operate": [
     "env SCALA_HOME_SHY ${root} + PATH %SCALA_HOME_SHY%\\bin += < "
-  ]
+  ],
+  "variable": {
+    "owner": "lampepfl",
+    "repo": "dotty"
+  }
 }
